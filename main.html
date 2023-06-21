@@ -3,78 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
     <head>
-        <style>        
-body.darkMode {
-    background-color: #1e1e24;
-
-}
-body {
-    background-color: #f5efdf;
-}
-#head.darkMode {
-    background-color: #282a30;
-}
-#head {
-    top:0px;
-    left:0px;
-    position:absolute;
-    height:10%;
-    width:100%;
-    background-color: #7ecfc5;
-}
-button.darkMode {
-    background-color: #424258;
-}
-button {
-    background-color: #599590;
-}
-#darkMode {
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    right:1%;
-}
-#main {
-    position:absolute;
-    top:10%;
-    left:0px;
-    width:100%;
-    bottom:10%;
-}
-#game {
-    border-style:solid;
-    border-width:2px;
-    border-color:#666;
-    top:5%;
-    height:80%;
-    width:70%;
-    position:absolute;
-    left:50%;
-    transform: translateX(-50%);
-}
-#foot.darkMode {
-    background-color: #121417;
-}
-#foot {
-    position:absolute;
-    bottom:0px;
-    left:0px;
-    width:100%;
-    height:5%;
-    margin:0px;
-    background-color: #c4b99b;
-}
-#devs {
-    margin-left: 3%;
-}
-p.darkMode {
-    color: #f5efdf;
-}
-p {
-    font-family:'Verdana',sans-serif;
-    color: #1e1e24;
-}
-        </style>
+        <link rel="stylesheet" href="style.css">
         <script>
 function darkMode() {
     const elements = document.querySelectorAll('body, body *');
@@ -96,7 +25,7 @@ function darkMode() {
         </div>
         <div id="main">
             <div id="game">
-                <p style="margin:0 auto">The game will go here.</p>
+                <p>The game will go here.</p>
             </div>
         </div>
         <canvas id="Tiles" width="1000" height="1000"></canvas>
