@@ -1,0 +1,31 @@
+Game states:
+
+-Main Menu
+    -Singleplayer
+        -Game
+    -Multiplayer
+        -Local
+            -Game
+        (if online implemented)
+        -Online
+            -Connect
+                -Game
+                -Game options
+    -Settings
+        -Game options
+        -Display options
+
+Design:
+Program renders specific state, state render method returns a context switch if it should happen
+
+Classes:
+Input
+Program
+    -receives Input state
+    -calls (ProgramState.update(Input)) 
+ProgramState
+    -update method returns contextSwitch
+    -render takes canvas
+States implement ProgramState
+
+This is an implementation of the State design pattern.
