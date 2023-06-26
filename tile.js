@@ -42,6 +42,6 @@ class Tile {
 }
   
 // Usage example:
-const tile1 = new Tile('Tiles', 'A', 400, 200);
+const tile1 = new Tile('Game', 'A', 400, 200);
 tile1.render();
   
