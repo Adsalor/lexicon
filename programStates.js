@@ -26,10 +26,12 @@ class ProgramState {
     update(input) {
         throw new Error("Update method must be implemented!");
     }
+    /*
     render(canvas)
     get ID() {
         return this.label;
     }
+    */
 }
 
 class Menu extends ProgramState {
