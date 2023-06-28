@@ -33,9 +33,9 @@ button {
     top:10%;
     left:0px;
     width:100%;
-    bottom:10%;
+    bottom:5%;
 }
-#game {
+#gameArea {
     border-style:solid;
     border-width:2px;
     border-color:#666;

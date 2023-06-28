@@ -70,8 +70,3 @@ class Tile {
         
     }
 }
-  
-// Usage example:
-const tile1 = new Tile('Game', '', 400, 200);
-tile1.render();
-  
