@@ -1,8 +1,7 @@
 class Program {
-    //add your programState to the Program initialization method
+    //add your programState to Program.states
     #currentState;
     constructor() {
-        mainMenu = new Menu("Main Menu",mainMenuButtons/* */);
         this.states = [mainMenu]
         this.#currentState = this.states[0];
     }
@@ -24,26 +23,28 @@ class ProgramState {
         label = newLabel;
     }
     update(input) {
-        throw new Error("Update method must be implemented!");
+        throw new Error("Update function must be implemented!");
     }
-    /*
-    render(canvas)
+    
+    render(canvas) {
+        throw new Error("Render function must be implemented!");
+    }
     get ID() {
         return this.label;
     }
-    */
 }
 
 class Menu extends ProgramState {
-    #buttons = {/*A list of buttons that can be pressed*/};
-    constructor(newLabel,newButtons) {
-        this.buttons = newButtons;
+    #inputs = [/*A list of input devices*/];
+    constructor(newLabel,newDevices) {
+        this.inputs = newDevices;
         super(newLabel);
     }
     update(input) {
-        for (button of this.buttons) {
-            //  if input.on(button)
-            //      return button.state
+        for (device of this.inputs) {
+            //  if device.overlapping(input)
+            //      device.update(input)
+            //      return device.state
         }
         
         //return super.label

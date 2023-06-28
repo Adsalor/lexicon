@@ -1,0 +1,3 @@
+mainButtons = [];
+
+mainMenu = new Menu();
