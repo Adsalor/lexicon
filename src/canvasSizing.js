@@ -1,4 +1,4 @@
-$(window).on('resize',function(){
+function resizeCanvas() {
     //if the game canvas does not fit at 16x9, flip canvas to 9x16
     //use portrait display
     //space canvas can fill in is up to 85% of window height, and up to 100% of window width
@@ -47,4 +47,7 @@ $(window).on('resize',function(){
     }
 
     $('#Game').width(width).height(height);
-});
+}
+
+$(window).on('resize',resizeCanvas());
+$(window).load(resizeCanvas());
