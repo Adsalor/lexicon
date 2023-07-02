@@ -1,4 +1,4 @@
-function resizeCanvas() {
+function thresholdResizeCanvas() {
     //if the game canvas does not fit at 16x9, flip canvas to 9x16
     //use portrait display
     //space canvas can fill in is up to 85% of window height, and up to 100% of window width
@@ -6,8 +6,6 @@ function resizeCanvas() {
     //minimum height of window is a parameter i'll adjust by testing
     //but once the window needs to shrink below that proportion of window height to maintain 16x9, swap to 9x16
 
-    //TODO: REWORK
-    //THRESHOLD IS NOT GOOD APPROACH, TEST SELECT FOR MAX AREA
     var win = $(this);
     var height = win.height();
     var width = win.width();
@@ -40,14 +38,28 @@ function resizeCanvas() {
         }
     } else {
         //16:9 aspect ratio
-        //we know already that using the maximum width fits within the minimum height
-        //so just use maxwidth and corresponding height
-        width = maxWidth;
-        height = width/16 * 9;
+        //max height or width could be limiter
+        if (maxWidth * 9 / 16 > maxHeight) {
+            //height is limiter
+            height = maxHeight
+            width = height * 16 / 9;
+        } else {
+            width = maxWidth;
+            height = width * 9 / 16;
+        }
     }
 
     $('#Game').width(width).height(height);
 }
 
-$(window).on('resize',resizeCanvas());
-$(window).load(resizeCanvas());
+//instead of switching to 9:16 on a threshold, pick whichever aspect ratio maximizes screen area
+function maximumResizeCanvas() {
+
+}
+
+function processCoordinates() {
+
+}
+
+$(window).on('resize',thresholdResizeCanvas());
+$(window).load(thresholdResizeCanvas());
