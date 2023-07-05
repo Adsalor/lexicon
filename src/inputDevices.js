@@ -32,8 +32,8 @@ class InputDevice {
 
 class Button extends InputDevice {
     //...
-    constructor(){
-        super();
+    constructor(newMode,newBounding){
+        super(newMode,newBounding);
         this.selected=false;
     }
 }
@@ -48,9 +48,10 @@ class Slider extends InputDevice {
 }
 
 class Tile extends Button {
-    //...
+    //not sure if x and y should be here, but they're just leftover from tile.js
+    //-Andrew
     constructor(letter, x, y) {
-        super();
+        //super(newMode,newBounding); //figure out how this is supposed to be used
         this.letter = letter;
         this.x = x;
         this.y = y;
