@@ -16,7 +16,7 @@ class InputDevice {
         for (segment of bounding) {
             //if (x-intersect) intersections++;
         }
-        return intersections % 2;
+        return intersections % 2 == 1;
     }
     update(input) {
         throw new Error("Update method must be implemented!");
@@ -50,11 +50,21 @@ class Slider extends InputDevice {
 class Tile extends Button {
     //not sure if x and y should be here, but they're just leftover from tile.js
     //-Andrew
-    constructor(letter, x, y) {
-        //super(newMode,newBounding); //figure out how this is supposed to be used
+    constructor(letter, x, y, scale) {
         this.letter = letter;
         this.x = x;
         this.y = y;
+        endPoint = (x + scale,y);
+        newBounding = [];
+        for (let i = 1; i <= 6; i++) {
+            startPoint = endPoint;
+            const angle = (Math.PI / 3) * i;
+            const x = centerX + scale * Math.cos(angle);
+            const y = centerY + scale * Math.sin(angle);
+            endPoint = (x, y);
+            newBounding.append((startPoint,endPoint));
+        }
+        super(false,newBounding);
     }
 
     //hexagon with letter (or capital)
