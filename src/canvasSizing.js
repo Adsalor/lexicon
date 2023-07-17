@@ -1,6 +1,11 @@
 class CanvasHandler {
     //"singleton" that runs on window launch, handles canvas resizing and also handles raw input parsing
-    #wide
+    wide
+
+    constructor() {
+        this.wide = true;
+        this.thresholdResizeCanvas();
+    }
     
     thresholdResizeCanvas() {
         //if the game canvas does not fit at 16x9, flip canvas to 9x16
@@ -9,7 +14,7 @@ class CanvasHandler {
         //header and footer take 10% and 5% of window size respectively
         //minimum height of window is a parameter i'll adjust by testing
         //but once the window needs to shrink below that proportion of window height to maintain 16x9, swap to 9x16
-        var win = $(this);
+        var win = $(window);
         var height = win.height();
         var width = win.width();
         console.log("Window Height:", height, " Window Width:", width);
@@ -39,7 +44,7 @@ class CanvasHandler {
                 width = maxWidth;
                 height = width * 16 / 9;
             }
-            this.#wide = false;
+            this.wide = false;
         } else {
             //16:9 aspect ratio
             //max height or width could be limiter
@@ -51,7 +56,7 @@ class CanvasHandler {
                 width = maxWidth;
                 height = width * 9 / 16;
             }
-            this.#wide = true;
+            this.wide = true;
         }
     
         $('#Game').width(width).height(height);
@@ -65,15 +70,8 @@ class CanvasHandler {
     processCoordinates() {
         //do later
     }
-
-    isWide() {
-        return this.#wide;
-    }
 }
 
-canvas = new CanvasHandler;
+canvas = new CanvasHandler();
 
-
-
-$(window).on('resize',canvas.thresholdResizeCanvas());
-$(window).load(canvas.thresholdResizeCanvas());
+$(window).on('resize',canvas.thresholdResizeCanvas);
