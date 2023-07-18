@@ -14,11 +14,13 @@ class InputDevice {
     overlapping(input) {
         var intersections = 0;
         for (segment of bounding) {
-            // if (!((input[0] < segment[0][0] && input[0] < segment[1][0]) || (input[0] > segment[0][0] && input[0] > segment[1][0]))) {
-            //     continue;
-            // } else {
-            //     //
-            // }
+            if (!((input[0] < segment[0][0] && input[0] < segment[1][0]) || (input[0] > segment[0][0] && input[0] > segment[1][0]))) {
+                continue;
+            } else {
+                var segmentSlope = (segment[0][1] - segment[1][1]) / (segment[0][0] - segment[1][0]);
+                var y = segmentSlope*(input[0] - segment[0][0]) + segment[0][1];
+                if (y < input[1]) intersections++;
+            }
         }
         return intersections % 2 == 1;
     }
