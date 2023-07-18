@@ -1,3 +1,5 @@
+import { BoardLayout } from "./board";
+
 class GameSettings {
     numPlayers;
     boardSize;
@@ -6,7 +8,7 @@ class GameSettings {
     constructor() {
         this.numPlayers = 2;
         this.boardSize = [7,7];
-        this.boardLayout = new Board(this.boardSize);
+        this.boardLayout = new BoardLayout();
     }
 
     loadFromSave() {
