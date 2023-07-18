@@ -1,5 +1,3 @@
-import { gameSettings } from "./settings";
-
 class Board {
     tiles;
     size;

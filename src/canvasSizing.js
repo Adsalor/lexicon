@@ -72,6 +72,6 @@ class CanvasHandler {
     }
 }
 
-export var canvas = new CanvasHandler();
+var canvas = new CanvasHandler();
 
 $(window).on('resize',canvas.thresholdResizeCanvas);

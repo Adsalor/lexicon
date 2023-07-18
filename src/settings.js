@@ -1,5 +1,3 @@
-import { BoardLayout } from "./board";
-
 class GameSettings {
     numPlayers;
     boardSize;
@@ -52,8 +50,8 @@ class DisplaySettings {
     }
 }
 
-export var gameSettings = new GameSettings();
+var gameSettings = new GameSettings();
 gameSettings.loadFromSave();
 
-export var displaySettings = new DisplaySettings();
+var displaySettings = new DisplaySettings();
 displaySettings.loadFromSave();
