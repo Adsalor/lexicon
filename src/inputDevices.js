@@ -37,20 +37,20 @@ class InputDevice {
 class Button extends InputDevice {
     //...
     constructor(newMode, x, y, scale){
-        endPoint = [x + scale,y];
-        newBounding = [];
+        var endPoint = [x + scale,y];
+        var newBounding = [];
         for (let i = 1; i <= 6; i++) {
-            startPoint = endPoint;
+            var startPoint = endPoint;
             const angle = (Math.PI / 3) * i;
-            const x = centerX + scale * Math.cos(angle);
-            const y = centerY + scale * Math.sin(angle);
-            endPoint = [x, y];
-            newBounding.append([startPoint,endPoint]);
+            const x1 = x + scale * Math.cos(angle);
+            const y1 = y + scale * Math.sin(angle);
+            endPoint = [x1, y1];
+            newBounding.push([startPoint,endPoint]);
         }
         super(newMode,newBounding);
         this.selected=false;
-        this.centerX = x;
-        this.centerY = y;
+        this.x = x;
+        this.y = y;
         this.size = scale;
     }
     isSelected(){
@@ -58,8 +58,6 @@ class Button extends InputDevice {
     }
     render(canvas){
         const context = canvas.getContext('2d');
-        const centerX = this.x;
-        const centerY = this.y;
         // Draws the hexagon outline
         context.beginPath();
         context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
@@ -89,8 +87,8 @@ class Tile extends Button {
     //not sure if x and y should be here, but they're just leftover from tile.js
     //-Andrew
     constructor(letter, x, y, scale) {
-        this.letter = letter;
         super(false, x, y, scale);
+        this.letter = letter;
     }
 
     //hexagon with letter (or capital)
