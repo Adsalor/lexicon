@@ -20,7 +20,7 @@ class Program {
 class ProgramState {
     #label;
     constructor(newLabel) {
-        label = newLabel;
+        this.label = newLabel;
     }
     update(input) {
         throw new Error("Update function must be implemented!");
@@ -35,10 +35,10 @@ class ProgramState {
 }
 
 class Menu extends ProgramState {
-    #inputs = [/*A list of input devices*/];
+    #inputs = [new Button(false,10,10,10)];
     constructor(newLabel,newDevices) {
-        this.inputs = newDevices;
         super(newLabel);
+        this.inputs = newDevices;
     }
     update(input) {
         for (device of this.inputs) {
@@ -48,6 +48,11 @@ class Menu extends ProgramState {
         }
         
         //return super.label
+    }
+    render(canvas){
+        for(device of this.inputs){
+            device.render(canvas);
+        }
     }
 }
 
