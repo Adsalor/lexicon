@@ -32,9 +32,43 @@ class InputDevice {
 
 class Button extends InputDevice {
     //...
-    constructor(newMode,newBounding){
-        super(newMode,newBounding);
+    constructor(newMode, x, y, scale){
         this.selected=false;
+        this.centerX = x;
+        this.centerY = y;
+        this.size = scale;
+        endPoint = (x + scale,y);
+        newBounding = [];
+        for (let i = 1; i <= 6; i++) {
+            startPoint = endPoint;
+            const angle = (Math.PI / 3) * i;
+            const x = centerX + scale * Math.cos(angle);
+            const y = centerY + scale * Math.sin(angle);
+            endPoint = (x, y);
+            newBounding.append((startPoint,endPoint));
+        }
+        super(newMode,newBounding);
+    }
+    isSelected(){
+        return this.selected;
+    }
+    render(canvas){
+        const context = canvas.getContext('2d');
+        const centerX = this.x;
+        const centerY = this.y;
+        // Draws the hexagon outline
+        context.beginPath();
+        context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
+  
+        for (let i = 0; i < this.bounding.length; i++) {
+            context.lineTo(this.bounding[i].x,this.bounding[i].y);
+        }
+  
+        context.closePath();
+  
+        // Fill the hexagon with a color based on the selected state
+        context.fillStyle = this.selected ? 'black' : 'white';
+        context.fill();
     }
 }
 
@@ -52,20 +86,7 @@ class Tile extends Button {
     //-Andrew
     constructor(letter, x, y, scale) {
         this.letter = letter;
-        this.centerX = x;
-        this.centerY = y;
-        this.size = scale;
-        endPoint = (x + scale,y);
-        newBounding = [];
-        for (let i = 1; i <= 6; i++) {
-            startPoint = endPoint;
-            const angle = (Math.PI / 3) * i;
-            const x = centerX + scale * Math.cos(angle);
-            const y = centerY + scale * Math.sin(angle);
-            endPoint = (x, y);
-            newBounding.append((startPoint,endPoint));
-        }
-        super(false,newBounding);
+        super(false, x, y, scale);
     }
 
     //hexagon with letter (or capital)
@@ -97,7 +118,7 @@ class Tile extends Button {
     //hexagon without letter
     renderEmpty(canvas){
         const context = canvas.getContext('2d');
-        
+
         // Draws the hexagon outline
         context.beginPath();
         context.moveTo(centerX + size * Math.cos(0)/2, centerY + size/2 * Math.sin(0));
