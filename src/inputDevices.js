@@ -3,10 +3,10 @@
 
 class InputDevice {
     #isChanger //whether should update to new program state on interaction
-    #bounding
+    bounding
     constructor(newMode,newBounding) {
         this.#isChanger = newMode;
-        this.#bounding = newBounding;
+        this.bounding = newBounding;
     }
     render(canvas) {
         throw new Error("Render method must be implemented!")
@@ -52,8 +52,9 @@ class Tile extends Button {
     //-Andrew
     constructor(letter, x, y, scale) {
         this.letter = letter;
-        this.x = x;
-        this.y = y;
+        this.centerX = x;
+        this.centerY = y;
+        this.size = scale;
         endPoint = (x + scale,y);
         newBounding = [];
         for (let i = 1; i <= 6; i++) {
@@ -70,18 +71,14 @@ class Tile extends Button {
     //hexagon with letter (or capital)
     renderFull(canvas){
         const context = canvas.getContext('2d');
-        const size = 50; // Size of the hexagon
         const centerX = this.x;
         const centerY = this.y;
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(centerX + size * Math.cos(0), centerY + size * Math.sin(0));
+        context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
   
-        for (let i = 1; i <= 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = centerX + size * Math.cos(angle);
-            const y = centerY + size * Math.sin(angle);
-            context.lineTo(x, y);
+        for (let i = 0; i < this.bounding.length; i++) {
+            context.lineTo(this.bounding[i].x,this.bounding[i].y);
         }
   
         context.closePath();
@@ -100,18 +97,16 @@ class Tile extends Button {
     //hexagon without letter
     renderEmpty(canvas){
         const context = canvas.getContext('2d');
-        const size = 25; // Size of the hexagon
-        const centerX = this.x;
-        const centerY = this.y;
+        
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(centerX + size * Math.cos(0), centerY + size * Math.sin(0));
+        context.moveTo(centerX + size * Math.cos(0)/2, centerY + size/2 * Math.sin(0));
         context.lineWidth=5;
         context.strokeStyle='black';
         for (let i = 1; i <= 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const x = centerX + size * Math.cos(angle);
-            const y = centerY + size * Math.sin(angle);
+            const x = centerX + size/2 * Math.cos(angle);
+            const y = centerY + size/2 * Math.sin(angle);
             context.lineTo(x, y);
         }
   
