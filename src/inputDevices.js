@@ -14,7 +14,11 @@ class InputDevice {
     overlapping(input) {
         var intersections = 0;
         for (segment of bounding) {
-            //if (x-intersect) intersections++;
+            // if (!((input[0] < segment[0][0] && input[0] < segment[1][0]) || (input[0] > segment[0][0] && input[0] > segment[1][0]))) {
+            //     continue;
+            // } else {
+            //     //
+            // }
         }
         return intersections % 2 == 1;
     }
@@ -33,21 +37,21 @@ class InputDevice {
 class Button extends InputDevice {
     //...
     constructor(newMode, x, y, scale){
-        this.selected=false;
-        this.centerX = x;
-        this.centerY = y;
-        this.size = scale;
-        endPoint = (x + scale,y);
+        endPoint = [x + scale,y];
         newBounding = [];
         for (let i = 1; i <= 6; i++) {
             startPoint = endPoint;
             const angle = (Math.PI / 3) * i;
             const x = centerX + scale * Math.cos(angle);
             const y = centerY + scale * Math.sin(angle);
-            endPoint = (x, y);
-            newBounding.append((startPoint,endPoint));
+            endPoint = [x, y];
+            newBounding.append([startPoint,endPoint]);
         }
         super(newMode,newBounding);
+        this.selected=false;
+        this.centerX = x;
+        this.centerY = y;
+        this.size = scale;
     }
     isSelected(){
         return this.selected;
