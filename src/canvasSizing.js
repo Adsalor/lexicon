@@ -17,12 +17,10 @@ class CanvasHandler {
         var win = $(window);
         var height = win.height();
         var width = win.width();
-        console.log("Window Height:", height, " Window Width:", width);
     
         var gameArea = $('#gameArea');
         var maxHeight = gameArea.height();
         var maxWidth = gameArea.width();
-        console.log("game height:",maxHeight,"game width:",maxWidth);
     
         var minHeight = 0.3*height;
         var width;

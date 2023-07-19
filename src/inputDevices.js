@@ -59,22 +59,21 @@ class Button extends InputDevice {
         return this.selected;
     }
     render(canvas){
-        console.log("rendering XD");
         const context = canvas.get(0).getContext('2d');
-        console.log(context);
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
+        context.moveTo(this.bounding[0][0][0],this.bounding[0][0][1]);
   
         for (let i = 0; i < this.bounding.length; i++) {
-            context.lineTo(this.bounding[i].x,this.bounding[i].y);
+            context.lineTo(this.bounding[i][1][0],this.bounding[i][1][1]);
         }
   
         context.closePath();
   
-        // Fill the hexagon with a color based on the selected state
+        //Fill the hexagon with a color based on the selected state
         context.fillStyle = this.selected ? 'white' : 'white';
         context.fill();
+        
     }
 }
 
