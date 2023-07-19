@@ -35,7 +35,7 @@ class ProgramState {
 }
 
 class Menu extends ProgramState {
-    #inputs = [new Button(false,10,10,10)];
+    #inputs = [new Button(false,100,100,100)];
     constructor(newLabel,newDevices) {
         super(newLabel);
         this.inputs = newDevices;
@@ -50,8 +50,8 @@ class Menu extends ProgramState {
         //return super.label
     }
     render(canvas){
-        for(device of this.inputs){
-            device.render(canvas);
+        for(let i = 0; i < this.#inputs.length;++i){
+            this.#inputs[i].render(canvas);
         }
     }
 }

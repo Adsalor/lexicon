@@ -74,4 +74,4 @@ class CanvasHandler {
 
 var canvas = new CanvasHandler();
 
-$(window).on('resize',canvas.thresholdResizeCanvas);
+//$(window).on('resize',canvas.thresholdResizeCanvas);

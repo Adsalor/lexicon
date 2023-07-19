@@ -59,7 +59,9 @@ class Button extends InputDevice {
         return this.selected;
     }
     render(canvas){
-        const context = canvas.getContext('2d');
+        console.log("rendering XD");
+        const context = canvas.get(0).getContext('2d');
+        console.log(context);
         // Draws the hexagon outline
         context.beginPath();
         context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
@@ -71,7 +73,7 @@ class Button extends InputDevice {
         context.closePath();
   
         // Fill the hexagon with a color based on the selected state
-        context.fillStyle = this.selected ? 'black' : 'white';
+        context.fillStyle = this.selected ? 'white' : 'white';
         context.fill();
     }
 }
@@ -95,7 +97,7 @@ class Tile extends Button {
 
     //hexagon with letter (or capital)
     renderFull(canvas){
-        const context = canvas.getContext('2d');
+        const context = canvas[0].getContext('2d');
         const centerX = this.x;
         const centerY = this.y;
         // Draws the hexagon outline
@@ -121,7 +123,7 @@ class Tile extends Button {
     }
     //hexagon without letter
     renderEmpty(canvas){
-        const context = canvas.getContext('2d');
+        const context = canvas[0].getContext('2d');
 
         // Draws the hexagon outline
         context.beginPath();
