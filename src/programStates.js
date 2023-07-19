@@ -35,7 +35,7 @@ class ProgramState {
 }
 
 class Menu extends ProgramState {
-    #inputs = [new Button(false,100,100,100)];
+    #inputs = [new Button(false,0.3,0.3,0.1)];
     constructor(newLabel,newDevices) {
         super(newLabel);
         this.inputs = newDevices;

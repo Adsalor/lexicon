@@ -14,9 +14,9 @@ class InputDevice {
     overlapping(input) {
         var intersections = 0;
         for (let i = 0; i < this.bounding.length; i++) {
-            const a = bounding[i];
-            const b = bounding[(i + 1) % this.bounding.length];
-            if (!((input[0] < a[0] && input[0] < b[0]) || (input[0] > a[0] && input[0] > b[0]))) {
+            const a = this.bounding[i];
+            const b = this.bounding[(i + 1) % this.bounding.length];
+            if (((input[0] < a[0] && input[0] < b[0]) || (input[0] > a[0] && input[0] > b[0]))) {
                 continue;
             } else {
                 const segmentSlope = (a[1] - b[1]) / (a[0] - b[0]);
@@ -57,14 +57,16 @@ class Button extends InputDevice {
     isSelected(){
         return this.selected;
     }
-    render(canvas) {
-        const context = canvas.get(0).getContext('2d');
+    render(renderTarget) {
+        const context = renderTarget.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(this.bounding[0][0],this.bounding[0][1]);
+        let coordinates = canvas.convertRelativeToCanvas(this.bounding[0]);
+        context.moveTo(coordinates[0],coordinates[1]);
   
         for (let i = 1; i < this.bounding.length; i++) {
-            context.lineTo(this.bounding[i][0],this.bounding[i][1]);
+            coordinates = canvas.convertRelativeToCanvas(this.bounding[i]);
+            context.lineTo(coordinates[0],coordinates[1]);
         }
   
         context.closePath();

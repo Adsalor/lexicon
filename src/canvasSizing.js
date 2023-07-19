@@ -1,9 +1,11 @@
 class CanvasHandler {
     //"singleton" that runs on window launch, handles canvas resizing and also handles raw input parsing
     wide
+    canvas
 
     constructor() {
         this.wide = true;
+        this.canvas = $('#Game');
         this.thresholdResizeCanvas();
     }
     
@@ -55,15 +57,15 @@ class CanvasHandler {
             this.wide = true;
         }
     
-        $('#Game').width(width).height(height);
+        this.canvas.width(width).height(height);
         
         //set canvas internal resolution
         if (this.wide) {
-            $('#Game').get(0).height = 1080;
-            $('#Game').get(0).width = 1920;
+            this.canvas.get(0).height = 1080;
+            this.canvas.get(0).width = 1920;
         } else {
-            $('#Game').get(0).height = 1920;
-            $('#Game').get(0).width = 1080;
+            this.canvas.get(0).height = 1920;
+            this.canvas.get(0).width = 1080;
         }
     }
     
@@ -72,8 +74,17 @@ class CanvasHandler {
         //do this later
     }
 
-    processCoordinates() {
-        //do later
+    processCoordinates(click) {
+        return this.convertOffsetToRelative([click.offsetX,click.offsetY]);
+    }
+
+    convertRelativeToCanvas(coordinates) {
+        return [coordinates[0] * 1080,coordinates[1] * 1080];
+    }
+
+    convertOffsetToRelative(coordinates) {
+        let shortSide = Math.min(this.canvas.width(),this.canvas.height());
+        return [coordinates[0] / shortSide, coordinates[1] / shortSide];
     }
 }
 
