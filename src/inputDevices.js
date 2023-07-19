@@ -142,10 +142,11 @@ class Tile extends Button {
     }
 
     render (canvas) {
-        if (this.letter=='') {
-            this.renderEmpty(canvas);
-        } else {
-            this.renderFull(canvas);
-        }
+        // if (this.letter=='') {
+        //     this.renderEmpty(canvas);
+        // } else {
+        //     this.renderFull(canvas);
+        // }
+        super.render(canvas);
     }
 }

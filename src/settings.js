@@ -49,9 +49,3 @@ class DisplaySettings {
         localStorage.setItem('fontSize',this.fontSize);
     }
 }
-
-var gameSettings = new GameSettings();
-gameSettings.loadFromSave();
-
-var displaySettings = new DisplaySettings();
-displaySettings.loadFromSave();
