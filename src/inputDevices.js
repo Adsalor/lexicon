@@ -13,12 +13,14 @@ class InputDevice {
     }
     overlapping(input) {
         var intersections = 0;
-        for (segment of bounding) {
-            if (!((input[0] < segment[0][0] && input[0] < segment[1][0]) || (input[0] > segment[0][0] && input[0] > segment[1][0]))) {
+        for (let i = 0; i < this.bounding.length; i++) {
+            const a = bounding[i];
+            const b = bounding[(i + 1) % this.bounding.length];
+            if (!((input[0] < a[0] && input[0] < b[0]) || (input[0] > a[0] && input[0] > b[0]))) {
                 continue;
             } else {
-                var segmentSlope = (segment[0][1] - segment[1][1]) / (segment[0][0] - segment[1][0]);
-                var y = segmentSlope*(input[0] - segment[0][0]) + segment[0][1];
+                const segmentSlope = (a[1] - b[1]) / (a[0] - b[0]);
+                const y = segmentSlope*(input[0] - a[0]) + a[1];
                 if (y < input[1]) intersections++;
             }
         }
@@ -39,15 +41,12 @@ class InputDevice {
 class Button extends InputDevice {
     //...
     constructor(newMode, x, y, scale){
-        var endPoint = [x + scale,y];
         var newBounding = [];
         for (let i = 1; i <= 6; i++) {
-            var startPoint = endPoint;
             const angle = (Math.PI / 3) * i;
             const x1 = x + scale * Math.cos(angle);
             const y1 = y + scale * Math.sin(angle);
-            endPoint = [x1, y1];
-            newBounding.push([startPoint,endPoint]);
+            newBounding.push([x1,y1]);
         }
         super(newMode,newBounding);
         this.selected=false;
@@ -58,14 +57,14 @@ class Button extends InputDevice {
     isSelected(){
         return this.selected;
     }
-    render(canvas){
+    render(canvas) {
         const context = canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(this.bounding[0][0][0],this.bounding[0][0][1]);
+        context.moveTo(this.bounding[0][0],this.bounding[0][1]);
   
-        for (let i = 0; i < this.bounding.length; i++) {
-            context.lineTo(this.bounding[i][1][0],this.bounding[i][1][1]);
+        for (let i = 1; i < this.bounding.length; i++) {
+            context.lineTo(this.bounding[i][0],this.bounding[i][1]);
         }
   
         context.closePath();
@@ -95,7 +94,7 @@ class Tile extends Button {
     }
 
     //hexagon with letter (or capital)
-    renderFull(canvas){
+    renderFull (canvas) {
         const context = canvas[0].getContext('2d');
         const centerX = this.x;
         const centerY = this.y;
@@ -121,7 +120,7 @@ class Tile extends Button {
         context.fillText(this.letter, centerX, centerY);
     }
     //hexagon without letter
-    renderEmpty(canvas){
+    renderEmpty (canvas) {
         const context = canvas[0].getContext('2d');
 
         // Draws the hexagon outline
@@ -140,12 +139,11 @@ class Tile extends Button {
         context.stroke();
     }
 
-    render(canvas) {
-        if(this.letter==''){
+    render (canvas) {
+        if (this.letter=='') {
             this.renderEmpty(canvas);
-        }else{
+        } else {
             this.renderFull(canvas);
         }
-        
     }
 }

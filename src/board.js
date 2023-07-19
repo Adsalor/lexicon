@@ -10,15 +10,15 @@ class Board {
 
 
 //0 = normal tile, 1-6 = player start location, -1 = wall (if we implement this)
-export class BoardLayout {
+class BoardLayout {
     tileStates;
     size;
     numPlayers;
 
     //default board layout
     constructor() {
-        this.numPlayers = gameSettings.numPlayers;
-        this.size = gameSettings.boardSize;
+        this.numPlayers = 2;
+        this.size = [7,7];
         this.tileStates = [];
         for (let i = 0; i < size[0]; i++) {
             tiles[i] = [];

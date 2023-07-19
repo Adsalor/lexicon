@@ -14,17 +14,15 @@ class CanvasHandler {
         //header and footer take 10% and 5% of window size respectively
         //minimum height of window is a parameter i'll adjust by testing
         //but once the window needs to shrink below that proportion of window height to maintain 16x9, swap to 9x16
-        var win = $(window);
-        var height = win.height();
-        var width = win.width();
+        let win = $(window);
+        let height = win.height();
+        let width = win.width();
     
-        var gameArea = $('#gameArea');
-        var maxHeight = gameArea.height();
-        var maxWidth = gameArea.width();
+        let gameArea = $('#gameArea');
+        let maxHeight = gameArea.height();
+        let maxWidth = gameArea.width();
     
-        var minHeight = 0.3*height;
-        var width;
-        var height;
+        let minHeight = 0.3*height;
         if (maxWidth/16 * 9 < minHeight) {
             //9:16 aspect ratio
             //limiting factor is either max width or height
@@ -58,6 +56,15 @@ class CanvasHandler {
         }
     
         $('#Game').width(width).height(height);
+        
+        //set canvas internal resolution
+        if (this.wide) {
+            $('#Game').get(0).height = 1080;
+            $('#Game').get(0).width = 1920;
+        } else {
+            $('#Game').get(0).height = 1920;
+            $('#Game').get(0).width = 1080;
+        }
     }
     
     //instead of switching to 9:16 on a threshold, pick whichever aspect ratio maximizes screen area
