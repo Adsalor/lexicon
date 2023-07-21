@@ -90,22 +90,22 @@ class Slider extends InputDevice {
 class Tile extends Button {
     //not sure if x and y should be here, but they're just leftover from tile.js
     //-Andrew
-    constructor(letter, x, y, scale) {
+    constructor(letter, x, y, scale, player) {
         super(false, x, y, scale);
         this.letter = letter;
+        this.player = player;   //tiles are owned by a player
     }
 
     //hexagon with letter (or capital)
-    renderFull (canvas) {
-        const context = canvas[0].getContext('2d');
-        const centerX = this.x;
-        const centerY = this.y;
-        // Draws the hexagon outline
+    renderFull (renderTarget) {
+        const context = renderTarget.get(0).getContext('2d');
         context.beginPath();
-        context.moveTo(this.bounding[this.bounding.length-1].x,this.bounding[this.bounding.length-1].y);
+        let coordinates = canvas.convertRelativeToCanvas(this.bounding[0]);
+        context.moveTo(coordinates[0],coordinates[1]);
   
-        for (let i = 0; i < this.bounding.length; i++) {
-            context.lineTo(this.bounding[i].x,this.bounding[i].y);
+        for (let i = 1; i < this.bounding.length; i++) {
+            coordinates = canvas.convertRelativeToCanvas(this.bounding[i]);
+            context.lineTo(coordinates[0],coordinates[1]);
         }
   
         context.closePath();
@@ -115,25 +115,26 @@ class Tile extends Button {
         context.fill();
   
         // Add the letter in the middle of the hexagon
+        let fontSize = Math.round(580*this.size);   //580 picked arbitrarily
         context.fillStyle = this.selected ? 'white' : 'black';
-        context.font = 'bold 20px Arial';
+        context.font = 'bold ' + fontSize+'px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(this.letter, centerX, centerY);
+        context.fillText(this.letter, this.x*1080, this.y*1080);
     }
     //hexagon without letter
-    renderEmpty (canvas) {
-        const context = canvas[0].getContext('2d');
+    renderEmpty (renderTarget) {
+        const context = renderTarget.get(0).getContext('2d');
 
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo(centerX + size * Math.cos(0)/2, centerY + size/2 * Math.sin(0));
+        context.moveTo((this.x + this.size * Math.cos(0)/2)*1080, (this.y + this.size/2 * Math.sin(0))*1080);
         context.lineWidth=5;
         context.strokeStyle='black';
         for (let i = 1; i <= 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const x = centerX + size/2 * Math.cos(angle);
-            const y = centerY + size/2 * Math.sin(angle);
+            const x = (this.x + this.size/2 * Math.cos(angle))*1080;
+            const y = (this.y + this.size/2 * Math.sin(angle))*1080;
             context.lineTo(x, y);
         }
   
@@ -142,11 +143,11 @@ class Tile extends Button {
     }
 
     render (canvas) {
-        // if (this.letter=='') {
-        //     this.renderEmpty(canvas);
-        // } else {
-        //     this.renderFull(canvas);
-        // }
-        super.render(canvas);
+        if (this.letter=='') {
+            this.renderEmpty(canvas);
+        } else {
+            this.renderFull(canvas);
+        }
+        //super.render(canvas);
     }
 }

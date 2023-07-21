@@ -54,7 +54,7 @@ class Board {
                 //if == 0, short column
                 //short columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
                 let y = 8/9 + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + 1) % 2) * innerRadius;
-                newTileCol[j] = new Tile('',x,y,sideLength * 0.95);
+                newTileCol[j] = new Tile('a',x,y,sideLength * 0.95);
             }
             this.tiles[i] = newTileCol;
         }
