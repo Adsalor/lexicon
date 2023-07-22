@@ -103,8 +103,9 @@ class Tile extends Button {
             color = displaySettings.playerColors[currentPlayer];
         }else if(renderMode == 2){
             //adjacent to selected tile
+            super.render(canvasHandler,"white");
             color = displaySettings.playerColors[currentPlayer];
-            context.filter = "brightness(300%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+            context.filter = "opacity(25%)";    //this causes the main color to max out and the other colors to make the tile seem more white
         } else if (renderMode == 3) {
             color = 'gray';
         }
@@ -140,14 +141,15 @@ class Tile extends Button {
         if (this.territoryOf) {
             let color = displaySettings.playerColors[this.territoryOf - 1];
             if(renderMode == 2){
+                context.fillStyle = "white";
+                context.fill();
                 color = displaySettings.playerColors[currentPlayer];
                 console.log("currentPlayer: "+currentPlayer+" color: "+color);
-                context.filter = "brightness(300%)";    //this causes the main color to max out and the other colors to make the tile seem more white
-            }else{
-                context.filter = "none";
+                context.filter = "opacity(25%)";    //this causes the main color to max out and the other colors to make the tile seem more white
             }
             context.fillStyle = color;
-            context.fill()
+            context.fill();
+            context.filter = "none";
         } else {
             context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
             context.stroke();
