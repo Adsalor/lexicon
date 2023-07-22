@@ -104,7 +104,7 @@ class Tile extends Button {
         }else if(renderMode == 2){
             //adjacent to selected tile
             color = displaySettings.playerColors[currentPlayer];
-            context.filter = "brightness(500%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+            context.filter = "brightness(300%)";    //this causes the main color to max out and the other colors to make the tile seem more white
         } else if (renderMode == 3) {
             color = 'gray';
         }
@@ -141,7 +141,10 @@ class Tile extends Button {
             let color = displaySettings.playerColors[this.territoryOf - 1];
             if(renderMode == 2){
                 color = displaySettings.playerColors[currentPlayer];
-                context.filter = "brightness(500%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+                console.log("currentPlayer: "+currentPlayer+" color: "+color);
+                context.filter = "brightness(300%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+            }else{
+                context.filter = "none";
             }
             context.fillStyle = color;
             context.fill()
