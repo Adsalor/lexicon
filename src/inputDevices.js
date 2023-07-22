@@ -95,16 +95,22 @@ class Tile extends Button {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         let color = 'white';
         if (renderMode == 1) {
+            //selected tile
             color = displaySettings.playerColors[currentPlayer];
+        }else if(renderMode == 2){
+            //adjacent to selected tile
+            color = displaySettings.playerColors[currentPlayer];
+            context.filter = "brightness(500%)";    //this causes the main color to max out and the other colors to make the tile seem more white
         }
         super.render(canvasHandler,color);
-  
+        context.filter = "none"
+
         // Add the letter in the middle of the hexagon
         let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y])
         //maximum coefficient: 1440
         //minimum coefficient: 540
         let fontSize = Math.round((540 + displaySettings.fontSize*900)*this.size);
-        context.fillStyle = this.selected ? 'white' : 'black';
+        context.fillStyle = renderMode==1 ? 'white' : 'black';
         context.font = 'bold ' + fontSize+'px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -127,6 +133,10 @@ class Tile extends Button {
         
         if (this.territoryOf) {
             let color = displaySettings.playerColors[this.territoryOf - 1];
+            if(renderMode == 2){
+                color = displaySettings.playerColors[currentPlayer];
+                context.filter = "brightness(500%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+            }
             context.fillStyle = color;
             context.fill()
         } else {
