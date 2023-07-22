@@ -4,6 +4,11 @@ body.darkMode {
 }
 body {
     background-color: #f5efdf;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 #head.darkMode {
     background-color: #282a30;
@@ -71,3 +76,21 @@ p {
     font-family:'Verdana',sans-serif;
     color: #1e1e24;
 }
+
+#mainMenu {
+    background-color: #52c4b4;
+    display: flex;
+    justify-content: center;
+  }
+  
+  #mainMenu button {
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  #mainMenu button:hover {
+    background-color: #cecece;
+  }
