@@ -105,6 +105,8 @@ class Tile extends Button {
             //adjacent to selected tile
             color = displaySettings.playerColors[currentPlayer];
             context.filter = "brightness(500%)";    //this causes the main color to max out and the other colors to make the tile seem more white
+        } else if (renderMode == 3) {
+            color = 'gray';
         }
         super.render(canvasHandler,color);
         context.filter = "none"
@@ -149,7 +151,7 @@ class Tile extends Button {
         }
     }
 
-    //renderMode is 0 if nothing, 1 if selected, 2 if adjacent to selected
+    //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
         if (this.letter=='') {
             this.renderEmpty(canvasHandler,currentPlayer,renderMode);

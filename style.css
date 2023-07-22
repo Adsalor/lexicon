@@ -46,9 +46,9 @@ button {
     left:50%;
     transform: translateX(-50%);
 }
-#Game {
+/* #Game {
     background-color: #323232;
-}
+} */
 #foot.darkMode {
     background-color: #121417;
 }

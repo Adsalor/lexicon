@@ -81,11 +81,12 @@ class Game extends ProgramState {
 
     update(input) {
         if (this.#submitButton.overlapping(input)) {
-            //if (dictionary.isValidWord(this.word())) {
-            //  this.#board.playTiles(this.#selected,this.currentPlayer);
+            let word = this.#word();
+            //if (dictionary.isValidWord(word)) {
+                this.#board.playTiles(this.#selected,this.#currentPlayer);
                 this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
             //}
-            alert("'" + this.#word() + "' played!");
+            alert("'" + word + "' played!");
             this.#selected = [];
         } else {
             let newTile = this.#board.update(input);
@@ -101,7 +102,6 @@ class Game extends ProgramState {
     }
 
     render(canvas) {
-        console.log(this.#selected);
         this.#board.render(canvas,this.#selected,this.#currentPlayer);
         //this.#wordDisplay.setText(this.#word());
         //this.#wordDisplay.render(canvas);
