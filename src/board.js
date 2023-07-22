@@ -5,9 +5,9 @@ class BoardLayout {
     numPlayers;
 
     //default board layout
-    constructor() {
-        this.numPlayers = 2;
-        this.size = [7,7]; // number of columns, hexes in large column
+    constructor(newSize = [7,7],newPlayers = 2) {
+        this.numPlayers = newPlayers;
+        this.size = newSize; // number of columns, hexes in large column
         this.tileStates = [];
         for (let i = 0; i < this.size[0]; i++) {
             this.tileStates[i] = [];
@@ -19,6 +19,7 @@ class BoardLayout {
             }
         }
 
+        //figure out new player placements
         this.tileStates[1][1] = 1;
         this.tileStates[5][5] = 2;
     }
@@ -35,13 +36,14 @@ class Board {
         //we want the hexagons to use the full width of the shorter side
         //every 2 rows/columns (depending on orientation) is 3 side lengths
         //so width of board is this many side lengths:
-        const lengthsToFill = Math.floor(layout.size[0] / 2) * 3 + ((layout.size[0] % 2 == 0)?0.5:2);
+        const lengthsToFill = 0.5 + this.size[0]*1.5;
 
         //and since side length * number of lengths to fill board = shorter side = 1:
         const sideLength = 1 / lengthsToFill;
         const innerRadius = (Math.sqrt(3) / 2) * sideLength;
 
         this.tiles = [];
+        const shortLongOffset = this.size[1] % 2;
         //now, start constructing tiles in board according to board layout
         for (let i = 0; i < layout.tileStates.length; i++) {
             let newTileCol = [];
@@ -50,21 +52,24 @@ class Board {
                 //y should be centered on 0.5 of the longer side = 8/9
                 //2*(hexes in large column) - 1 possible slots
                 //middle slot = 8/9, rest are off by innerRadius
-                //if i % 2 == 1, long column
-                //if == 0, short column
                 //short columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
-                let y = 8/9 + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + 1) % 2) * innerRadius;
+                let y = 8/9 + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + shortLongOffset) % 2) * innerRadius;
                 newTileCol[j] = new Tile('a',x,y,sideLength * 0.95);
             }
             this.tiles[i] = newTileCol;
         }
     }
 
-    render (canvas) {
+    render(canvas) {
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
                 this.tiles[i][j].render(canvas);
             }
         }
+    }
+
+    adjacentTiles(col,row) {
+        //return the list of tiles adjacent to the given tile
+        //lots of fun stuff to get done *later*
     }
 }

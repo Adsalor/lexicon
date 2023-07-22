@@ -1,4 +1,3 @@
 mainButtons = [];
 
-//var mainMenu = new Menu();
-//mainMenu.render($("canvas#Game"));
+var mainMenu = new Menu();
