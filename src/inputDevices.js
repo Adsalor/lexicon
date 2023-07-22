@@ -57,15 +57,15 @@ class Button extends InputDevice {
     isSelected(){
         return this.selected;
     }
-    render(renderTarget) {
-        const context = renderTarget.get(0).getContext('2d');
+    render(canvasHandler) {
+        const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
-        let coordinates = canvas.convertRelativeToCanvas(this.bounding[0]);
+        let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
         context.moveTo(coordinates[0],coordinates[1]);
   
         for (let i = 1; i < this.bounding.length; i++) {
-            coordinates = canvas.convertRelativeToCanvas(this.bounding[i]);
+            coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
             context.lineTo(coordinates[0],coordinates[1]);
         }
   
@@ -97,14 +97,14 @@ class Tile extends Button {
     }
 
     //hexagon with letter (or capital)
-    renderFull (renderTarget) {
-        const context = renderTarget.get(0).getContext('2d');
+    renderFull (canvasHandler) {
+        const context = canvasHandler.canvas.get(0).getContext('2d');
         context.beginPath();
-        let coordinates = canvas.convertRelativeToCanvas(this.bounding[0]);
+        let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
         context.moveTo(coordinates[0],coordinates[1]);
   
         for (let i = 1; i < this.bounding.length; i++) {
-            coordinates = canvas.convertRelativeToCanvas(this.bounding[i]);
+            coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
             context.lineTo(coordinates[0],coordinates[1]);
         }
   
@@ -123,8 +123,8 @@ class Tile extends Button {
         context.fillText(this.letter, this.x*1080, this.y*1080);
     }
     //hexagon without letter
-    renderEmpty (renderTarget) {
-        const context = renderTarget.get(0).getContext('2d');
+    renderEmpty (canvasHandler) {
+        const context = canvasHandler.canvas.get(0).getContext('2d');
 
         // Draws the hexagon outline
         context.beginPath();
@@ -142,12 +142,11 @@ class Tile extends Button {
         context.stroke();
     }
 
-    render (canvas) {
+    render (canvasHandler) {
         if (this.letter=='') {
-            this.renderEmpty(canvas);
+            this.renderEmpty(canvasHandler);
         } else {
-            this.renderFull(canvas);
+            this.renderFull(canvasHandler);
         }
-        //super.render(canvas);
     }
 }

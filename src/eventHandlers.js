@@ -4,8 +4,7 @@ function onLoad() {
 
 function onResize() {
     canvas.thresholdResizeCanvas();
-    board.render($("#Game"));
-    //button.render($("#Game"));
+    board.render(canvas);
 }
 
 function onClick(click) {
