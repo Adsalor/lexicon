@@ -2,25 +2,30 @@ class Program {
     //add your programState to Program.states
     #currentState;
     constructor() {
-        this.states = [mainMenu]
-        this.#currentState = this.states[0].ID();
+        this.states = [mainMenu,game]
+        this.#currentState = this.states[0];
     }
     update(input) {
-        for (state of this.states) {
-            if (state.ID() === this.#currentState) {
-                this.#currentState = state.update(input);
-                state.render(canvas);
-                return;
+        let newStateID = this.#currentState.update(input);
+        for (const state of this.states) {
+            if (newStateID === state.ID()) {
+                this.#currentState = state;
+                break;
             }
         }
-        throw new Error("No program state with ID = " + this.#currentState + " exists!");
+        this.render();
+    }
+
+    render() {
+        canvas.clear();
+        this.#currentState.render(canvas);
     }
 }
 
 class ProgramState {
     #label;
     constructor(newLabel) {
-        this.label = newLabel;
+        this.#label = newLabel;
     }
     update(input) {
         throw new Error("Update function must be implemented!");
@@ -29,7 +34,7 @@ class ProgramState {
     render(canvas) {
         throw new Error("Render function must be implemented!");
     }
-    get ID() {
+    ID() {
         return this.#label;
     }
 }
@@ -38,10 +43,10 @@ class Menu extends ProgramState {
     #inputs = [];
     constructor(newLabel,newDevices) {
         super(newLabel);
-        this.inputs = newDevices;
+        this.#inputs = newDevices;
     }
     update(input) {
-        for (device of this.inputs) {
+        for (const device of this.#inputs) {
             if (device.overlapping(input)) {
                 device.update(input);
                 if (device.newState()) return device.newState();
@@ -65,8 +70,8 @@ class Game extends ProgramState {
     #wordDisplay;
     #submitButton;
     #currentPlayer;
-    constructor() {
-        super("Game");
+    constructor(newLabel) {
+        super(newLabel);
         this.#board = new Board(gameSettings.boardLayout);
         this.#players = gameSettings.numPlayers;
         this.#submitButton = new Button(false,0.1,0.1,0.07);

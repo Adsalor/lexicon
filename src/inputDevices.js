@@ -26,7 +26,7 @@ class InputDevice {
     update(input) {
         throw new Error("Update method must be implemented!");
     }
-    get newState() {
+    newState() {
         return this.#newState;
     }
 }
@@ -67,6 +67,10 @@ class Button extends InputDevice {
         context.fillStyle = color;
         context.fill();
         
+    }
+
+    update(input) {
+        return;
     }
 }
 

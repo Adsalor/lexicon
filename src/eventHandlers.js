@@ -4,8 +4,7 @@ function onLoad() {
 
 function onResize() {
     canvas.thresholdResizeCanvas();
-    canvas.clear();
-    game.render(canvas);
+    program.render();
 }
 
 function onClick(click) {
@@ -15,9 +14,7 @@ function onClick(click) {
     //if (button.overlapping(relCoordinates)) {
     //    alert("Button clicked!");
     //}
-    game.update(relCoordinates);
-    canvas.clear();
-    game.render(canvas);
+    program.update(relCoordinates);
 }
 
 $(window).on('load',onLoad);

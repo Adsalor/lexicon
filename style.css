@@ -4,11 +4,6 @@ body.darkMode {
 }
 body {
     background-color: #f5efdf;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
 }
 #head.darkMode {
     background-color: #282a30;
@@ -77,7 +72,7 @@ p {
     color: #1e1e24;
 }
 
-#mainMenu {
+/* #mainMenu {
     background-color: #52c4b4;
     display: flex;
     justify-content: center;
@@ -93,4 +88,4 @@ p {
   
   #mainMenu button:hover {
     background-color: #cecece;
-  }
+  } */
