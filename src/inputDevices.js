@@ -2,10 +2,10 @@
 //if we need to change it, it's no big deal
 
 class InputDevice {
-    #isChanger //whether should update to new program state on interaction
+    #newState //whether should update to new program state on interaction, can be false or string representing new state
     bounding
     constructor(newMode,newBounding) {
-        this.#isChanger = newMode;
+        this.#newState = newMode;
         this.bounding = newBounding;
     }
     render(canvas) {
@@ -29,8 +29,8 @@ class InputDevice {
     update(input) {
         throw new Error("Update method must be implemented!");
     }
-    get changeState() {
-        return this.#isChanger;
+    get newState() {
+        return this.#newState;
     }
 }
 
@@ -62,11 +62,11 @@ class Button extends InputDevice {
         // Draws the hexagon outline
         context.beginPath();
         let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
-        context.moveTo(coordinates[0],coordinates[1]);
+        context.moveTo(...coordinates);
   
         for (let i = 1; i < this.bounding.length; i++) {
             coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
-            context.lineTo(coordinates[0],coordinates[1]);
+            context.lineTo(...coordinates);
         }
   
         context.closePath();
@@ -99,46 +99,35 @@ class Tile extends Button {
     //hexagon with letter (or capital)
     renderFull (canvasHandler) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
-        context.beginPath();
-        let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
-        context.moveTo(coordinates[0],coordinates[1]);
-  
-        for (let i = 1; i < this.bounding.length; i++) {
-            coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
-            context.lineTo(coordinates[0],coordinates[1]);
-        }
-  
-        context.closePath();
-  
-        // Fill the hexagon with a color based on the selected state
-        context.fillStyle = this.selected ? 'black' : 'white';
-        context.fill();
+        super.render(canvasHandler);
   
         // Add the letter in the middle of the hexagon
-        let fontSize = Math.round(580*this.size);   //580 picked arbitrarily
+        let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y])
+        //maximum coefficient: 1440
+        //minimum coefficient: 540
+        let fontSize = Math.round((540 + displaySettings.fontSize*900)*this.size);
         context.fillStyle = this.selected ? 'white' : 'black';
         context.font = 'bold ' + fontSize+'px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        context.fillText(this.letter, this.x*1080, this.y*1080);
+        context.fillText(this.letter, coordinates[0], coordinates[1]);
     }
     //hexagon without letter
     renderEmpty (canvasHandler) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
-
         // Draws the hexagon outline
         context.beginPath();
-        context.moveTo((this.x + this.size * Math.cos(0)/2)*1080, (this.y + this.size/2 * Math.sin(0))*1080);
-        context.lineWidth=5;
-        context.strokeStyle='black';
-        for (let i = 1; i <= 6; i++) {
-            const angle = (Math.PI / 3) * i;
-            const x = (this.x + this.size/2 * Math.cos(angle))*1080;
-            const y = (this.y + this.size/2 * Math.sin(angle))*1080;
-            context.lineTo(x, y);
+        let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
+        context.moveTo(...coordinates);
+  
+        for (let i = 1; i < this.bounding.length; i++) {
+            coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
+            context.lineTo(...coordinates);
         }
   
         context.closePath();
+
+        context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
         context.stroke();
     }
 

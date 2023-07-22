@@ -68,6 +68,10 @@ class CanvasHandler {
             this.canvas.get(0).width = 1080;
         }
     }
+
+    clear() {
+        this.canvas.get(0).getContext('2d').clearRect(0,0,this.canvas.get(0).width,this.canvas.get(0).height);
+    }
     
     //instead of switching to 9:16 on a threshold, pick whichever aspect ratio maximizes screen area
     maximumResizeCanvas() {
@@ -79,15 +83,18 @@ class CanvasHandler {
     }
 
     convertRelativeToCanvas(coordinates) {
-        return [coordinates[0] * 1080,coordinates[1] * 1080];
+        let shortSide = Math.min(this.canvas.get(0).height,this.canvas.get(0).width);
+        return [coordinates[0] * shortSide,coordinates[1] * shortSide];
     }
 
     convertOffsetToRelative(coordinates) {
         let shortSide = Math.min(this.canvas.width(),this.canvas.height());
         return [coordinates[0] / shortSide, coordinates[1] / shortSide];
     }
+
+    convertRelLengthToCanvas(len) {
+        return len*Math.min(this.canvas.get(0).height,this.canvas.get(0).width);
+    }
 }
 
 var canvas = new CanvasHandler();
-
-//$(window).on('resize',canvas.thresholdResizeCanvas);
