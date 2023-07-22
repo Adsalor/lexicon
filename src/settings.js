@@ -35,7 +35,7 @@ class DisplaySettings {
         this.darkMode = false;
         this.colorblind = false;
         this.playerColors = ["FireBrick","SteelBlue","ForestGreen","GoldenRod","DarkOrchid","DarkOrange"];
-        this.fontSize = 1;
+        this.fontSize = 0.5;
     }
 
     loadFromSave() {

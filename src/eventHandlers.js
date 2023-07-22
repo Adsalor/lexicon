@@ -16,6 +16,8 @@ function onClick(click) {
     //    alert("Button clicked!");
     //}
     game.update(relCoordinates);
+    canvas.clear();
+    game.render(canvas);
 }
 
 $(window).on('load',onLoad);

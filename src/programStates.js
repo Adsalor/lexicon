@@ -64,22 +64,27 @@ class Game extends ProgramState {
     #selected = [];
     #wordDisplay;
     #submitButton;
+    #currentPlayer;
     constructor() {
         super("Game");
         this.#board = new Board(gameSettings.boardLayout);
+        this.#players = gameSettings.numPlayers;
         this.#submitButton = new Button(false,0.1,0.1,0.07);
+        //this.#wordDisplay = new Text("",0.5,0.1);
+        this.#currentPlayer = 0;
     } 
 
     update(input) {
         if (this.#submitButton.overlapping(input)) {
             //if (dictionary.isValidWord(this.word())) {
             //  this.#board.playTiles(this.#selected,this.currentPlayer);
+                this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
             //}
             alert("'" + this.#word() + "' played!");
             this.#selected = [];
         } else {
             let newTile = this.#board.update(input);
-            if (newTile) {
+            if (newTile && !newTile.territoryOf && newTile.letter != '') {
                 let index = this.#selected.indexOf(newTile);
                 if (index === -1) {
                     this.#selected.push(newTile);
@@ -91,7 +96,8 @@ class Game extends ProgramState {
     }
 
     render(canvas) {
-        this.#board.render(canvas,this.#selected,this.currentPlayer);
+        console.log(this.#selected);
+        this.#board.render(canvas,this.#selected,this.#currentPlayer);
         //this.#wordDisplay.setText(this.#word());
         //this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);

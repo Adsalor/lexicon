@@ -1,6 +1,3 @@
-//i am very tired rn, this is all probably somewhat bad
-//if we need to change it, it's no big deal
-
 class InputDevice {
     #newState //whether should update to new program state on interaction, can be false or string representing new state
     bounding
@@ -34,12 +31,11 @@ class InputDevice {
     }
 }
 
-//too much of this is dependent on the way we end up doing input handling from the canvas
-//i'm gonna focus on that then come back to this once i have a better idea of the formats
-//-Chris
-
 class Button extends InputDevice {
-    //...
+    x;
+    y;
+    size;
+
     constructor(newMode, x, y, scale){
         var newBounding = [];
         for (let i = 1; i <= 6; i++) {
@@ -49,15 +45,12 @@ class Button extends InputDevice {
             newBounding.push([x1,y1]);
         }
         super(newMode,newBounding);
-        this.selected=false;
         this.x = x;
         this.y = y;
         this.size = scale;
     }
-    isSelected(){
-        return this.selected;
-    }
-    render(canvasHandler) {
+
+    render(canvasHandler,color = 'white') {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
@@ -70,9 +63,8 @@ class Button extends InputDevice {
         }
   
         context.closePath();
-  
-        //Fill the hexagon with a color based on the selected state
-        context.fillStyle = this.selected ? 'white' : 'white';
+
+        context.fillStyle = color;
         context.fill();
         
     }
@@ -88,18 +80,24 @@ class Slider extends InputDevice {
 }
 
 class Tile extends Button {
-    //not sure if x and y should be here, but they're just leftover from tile.js
-    //-Andrew
-    constructor(letter, x, y, scale, player) {
+    letter;
+    territoryOf;
+    isCapital;
+
+    constructor(letter, x, y, scale, player = 0) {
         super(false, x, y, scale);
         this.letter = letter;
-        this.player = player;   //tiles are owned by a player
+        this.territoryOf = player;   //tiles are owned by a player
     }
 
     //hexagon with letter (or capital)
-    renderFull (canvasHandler) {
+    renderFull (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
-        super.render(canvasHandler);
+        let color = 'white';
+        if (renderMode == 1) {
+            color = displaySettings.playerColors[currentPlayer];
+        }
+        super.render(canvasHandler,color);
   
         // Add the letter in the middle of the hexagon
         let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y])
@@ -113,29 +111,36 @@ class Tile extends Button {
         context.fillText(this.letter, coordinates[0], coordinates[1]);
     }
     //hexagon without letter
-    renderEmpty (canvasHandler) {
+    renderEmpty (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
         let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
         context.moveTo(...coordinates);
-  
+
         for (let i = 1; i < this.bounding.length; i++) {
             coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
             context.lineTo(...coordinates);
         }
-  
-        context.closePath();
 
-        context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
-        context.stroke();
+        context.closePath();
+        
+        if (this.territoryOf) {
+            let color = displaySettings.playerColors[this.territoryOf - 1];
+            context.fillStyle = color;
+            context.fill()
+        } else {
+            context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
+            context.stroke();
+        }
     }
 
-    render (canvasHandler) {
+    //renderMode is 0 if nothing, 1 if selected, 2 if adjacent to selected
+    render (canvasHandler, currentPlayer, renderMode = 0) {
         if (this.letter=='') {
-            this.renderEmpty(canvasHandler);
+            this.renderEmpty(canvasHandler,currentPlayer,renderMode);
         } else {
-            this.renderFull(canvasHandler);
+            this.renderFull(canvasHandler,currentPlayer,renderMode);
         }
     }
 }

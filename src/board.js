@@ -35,10 +35,11 @@ class Board {
         //the hexagon flat side will be directed along the shorter side
         //we want the hexagons to use the full width of the shorter side
         //each hex is 1.5 side lengths, and the cap is an extra 0.5:
-        //  __
-        // /   + \
+        //        __
+        //  __   /   + \
+        // /   + \__   /
         // \__   /
-        // 1.5 + 0.5
+        // 1.5 + 1.5 + 0.5
         const lengthsToFill = 0.5 + this.size[0]*1.5;
 
         //and since side length * number of lengths to fill board = shorter side = 1:
@@ -57,18 +58,32 @@ class Board {
                 //middle slot = 8/9, rest are off by innerRadius
                 //even height columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
                 let y = 8/9 + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddOffset) % 2) * innerRadius;
-                const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                newTileCol[j] = new Tile(alphabet[Math.floor(Math.random() * 26)],x,y,sideLength * 0.95);
+
+                let newTile;
+                if (layout.tileStates[i][j] > 0) {
+                    console.log("territory tile at i:",i," j:",j);
+                    newTile = new Tile('',x,y,sideLength*0.95,layout.tileStates[i][j]);
+                } else if (layout.tileStates[i][j] === 0) {
+                    newTile = new Tile(this.newLetter(),x,y,sideLength * 0.95);
+                } else {
+                    newTile = null;
+                }
+
+                newTileCol[j] = newTile;
             }
             this.tiles[i] = newTileCol;
         }
+
+        
+        this.resetNonAdjacent();
     }
 
     render(canvas,selectedTiles,player) {
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
                 const tile = this.tiles[i][j];
-                tile.render(canvas);
+                const isSelected = ((selectedTiles.indexOf(tile) === -1)?0:1);
+                tile.render(canvas,player,isSelected);
             }
         }
     }
@@ -99,6 +114,8 @@ class Board {
         }
         if (row != 0) output.push(this.tiles[col][row - 1]);
         if (row != this.tiles[col].length - 1) output.push(this.tiles[col][row + 1]);
+
+        return output;
     }
 
     update(input) {
@@ -110,5 +127,35 @@ class Board {
             }
         }
         return false;
+    }
+
+    resetNonAdjacent() {
+        //for each non-owned tile, if no adjacent tiles are territory, set their letter to ''
+        for (let i = 0; i < this.size[0]; i++) {
+            for (let j = 0; j < this.tiles[i].length; j++) {
+                let tile = this.tiles[i][j];
+                if (tile.territoryOf) continue;
+                let adjacent = this.adjacentTiles(i,j);
+                let territoryAdjacentFlag = false;
+                for (const adjacentTile of adjacent) {
+                    if (adjacentTile.territoryOf) {
+                        territoryAdjacentFlag = true;
+                        break;
+                    }
+                }
+                if (territoryAdjacentFlag) continue;
+                tile.letter = '';
+            }
+        }
+    }
+
+    //fully random
+    newLetter() {
+        return this.#randomNewLetter();
+    }
+
+    #randomNewLetter() {
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        return alphabet[Math.floor(Math.random() * 26)];
     }
 }
