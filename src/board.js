@@ -220,6 +220,10 @@ class Board {
         return this.#fullyRandomNewLetter();
     }
 
+    isEliminated(player) {
+        return !this.tiles.some(col => col.some(tile => tile.territoryOf == player + 1));
+    }
+
     //fully random
     #fullyRandomNewLetter() {
         const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

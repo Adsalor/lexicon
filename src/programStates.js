@@ -84,28 +84,45 @@ class Menu extends ProgramState {
 class Game extends ProgramState {
     #board;
     #players;
+    #eliminatedPlayers;
     #selected = [];
     #wordDisplay;
     #submitButton;
     #currentPlayer;
     constructor(newLabel) {
         super(newLabel);
+        //this.#wordDisplay = new Text("",0.5,0.1);
+        this.#submitButton = new Button(false,0.1,0.1,0.07);
+        this.reload();
+    } 
+
+    reload() {
         this.#board = new Board(gameSettings.boardLayout);
         this.#players = gameSettings.numPlayers;
-        this.#submitButton = new Button(false,0.1,0.1,0.07);
-        //this.#wordDisplay = new Text("",0.5,0.1);
+        this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
-    } 
+        //this.#wordDisplay.text = "";
+    }
 
     update(input) {
         if (this.#submitButton.overlapping(input)) {
             let word = this.#word();
             //if (dictionary.isValidWord(word)) {
                 this.#board.playTiles(this.#selected,this.#currentPlayer);
-                this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
+                for (let i = 0; i < this.#players; i++) {
+                    if (this.#board.isEliminated(i)) this.#eliminatedPlayers.push(i);
+                }
+                do {
+                    this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
+                } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
+                if (this.#eliminatedPlayers.length == this.#players - 1) {
+                    //victory screen!
+                }
+                this.#selected = [];
+            //} else {
+            //  this.#wordDisplay.setColor(red);
             //}
             alert("'" + word + "' played!");
-            this.#selected = [];
         } else {
             let newTile = this.#board.update(input);
             if (newTile && !newTile.territoryOf && newTile.letter != '') {
