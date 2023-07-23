@@ -71,6 +71,14 @@ p {
     font-family:'Verdana',sans-serif;
     color: #1e1e24;
 }
+#title {
+    font: italic small-caps bold 16px/2 cursive;
+    position:absolute;
+    top:25%;
+    left:37%;
+    width:100%;
+    bottom:5%;
+}
 
 /* #mainMenu {
     background-color: #52c4b4;

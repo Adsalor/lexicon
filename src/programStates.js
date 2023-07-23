@@ -40,16 +40,25 @@ class ProgramState {
 }
 
 class Menu extends ProgramState {
+    #text;
+    #titleRendered;
     #inputs = [];
-    constructor(newLabel,newDevices) {
+    constructor(newText, newLabel,newDevices) {
         super(newLabel);
+        this.#titleRendered = false
+        this.#text = newText;
         this.#inputs = newDevices;
     }
     update(input) {
         for (const device of this.#inputs) {
             if (device.overlapping(input)) {
                 device.update(input);
-                if (device.newState()) return device.newState();
+                if (device.newState()){
+                    this.#titleRendered = false;
+                    const parentElement = document.getElementById("title"); 
+                    parentElement.removeChild(parentElement.firstChild);
+                    return device.newState();
+                }
                 break;
             }
         }
@@ -57,6 +66,15 @@ class Menu extends ProgramState {
         return super.ID();
     }
     render(canvas){
+        if (!this.#titleRendered) {
+            const newElement = document.createElement("p");
+            newElement.textContent = this.#text;
+
+            const parentElement = document.getElementById("title"); 
+            parentElement.appendChild(newElement);
+
+            this.#titleRendered = true; 
+        }
         for(let i = 0; i < this.#inputs.length;++i){
             this.#inputs[i].render(canvas);
         }
