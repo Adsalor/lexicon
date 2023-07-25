@@ -21,3 +21,27 @@ class Dictionary {
         return this.dataSet.has(word);
     }
 }
+
+// html used to run this
+// <!-- index.html -->
+// <!DOCTYPE html>
+// <html>
+
+// <head>
+//     <title>Dictionary Verification</title>
+// </head>
+
+// <body>
+//     <h1>Dictionary Verification</h1>
+//     <form id="wordForm">
+//         <label for="wordInput">Enter a word to verify:</label>
+//         <input type="text" id="wordInput" required>
+//         <button type="submit">Verify</button>
+//     </form>
+
+//     <div id="result"></div>
+
+//     <script src="dictionary.js"></script>
+// </body>
+
+// </html>
