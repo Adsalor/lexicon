@@ -40,23 +40,18 @@ class ProgramState {
 }
 
 class Menu extends ProgramState {
-    #text;
-    #titleRendered;
     #inputs = [];
-    constructor(newText, newLabel,newDevices) {
+    #displays = [];
+    constructor(newLabel, newDevices, newDisplays = []) {
         super(newLabel);
-        this.#titleRendered = false
-        this.#text = newText;
         this.#inputs = newDevices;
+        this.#displays = newDisplays;
     }
     update(input) {
         for (const device of this.#inputs) {
             if (device.overlapping(input)) {
                 device.update(input);
                 if (device.newState()){
-                    this.#titleRendered = false;
-                    const parentElement = document.getElementById("title"); 
-                    parentElement.removeChild(parentElement.firstChild);
                     return device.newState();
                 }
                 break;
@@ -66,17 +61,12 @@ class Menu extends ProgramState {
         return super.ID();
     }
     render(canvas){
-        if (!this.#titleRendered) {
-            const newElement = document.createElement("p");
-            newElement.textContent = this.#text;
-
-            const parentElement = document.getElementById("title"); 
-            parentElement.appendChild(newElement);
-
-            this.#titleRendered = true; 
-        }
         for(let i = 0; i < this.#inputs.length;++i){
             this.#inputs[i].render(canvas);
+        }
+
+        for (const display of this.#displays) {
+            display.render(canvas);
         }
     }
 }
@@ -91,7 +81,7 @@ class Game extends ProgramState {
     #currentPlayer;
     constructor(newLabel) {
         super(newLabel);
-        //this.#wordDisplay = new Text("",0.5,0.1);
+        this.#wordDisplay = new Label("",0.5,0.21,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
         this.reload();
     } 
@@ -101,13 +91,13 @@ class Game extends ProgramState {
         this.#players = gameSettings.numPlayers;
         this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
-        //this.#wordDisplay.text = "";
+        this.#wordDisplay.text = "";
     }
 
     update(input) {
         if (this.#submitButton.overlapping(input)) {
-            let word = this.#word();
-            //if (dictionary.isValidWord(word)) {
+            let word = this.#word().toLowerCase();
+            if (dict.verify(word)) {
                 this.#board.playTiles(this.#selected,this.#currentPlayer);
                 for (let i = 0; i < this.#players; i++) {
                     if (this.#board.isEliminated(i)) this.#eliminatedPlayers.push(i);
@@ -119,10 +109,9 @@ class Game extends ProgramState {
                     //victory screen!
                 }
                 this.#selected = [];
-            //} else {
-            //  this.#wordDisplay.setColor(red);
-            //}
-            alert("'" + word + "' played!");
+            } else {
+                this.#wordDisplay.fontColorLight = 'red';
+            }
         } else {
             let newTile = this.#board.update(input);
             if (newTile && !newTile.territoryOf && newTile.letter != '') {
@@ -133,20 +122,21 @@ class Game extends ProgramState {
                     this.#selected.splice(index,1);
                 }
             }
+            this.#wordDisplay.fontColorLight = 'black';
         }
     }
 
     render(canvas) {
         this.#board.render(canvas,this.#selected,this.#currentPlayer);
-        //this.#wordDisplay.setText(this.#word());
-        //this.#wordDisplay.render(canvas);
+        this.#wordDisplay.text = this.#word();
+        this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
     }
 
     #word() {
         let word = "";
         for (const tile of this.#selected) {
-            word += tile.letter;
+            word += tile.letter.toUpperCase();
         }
         return word;
     }

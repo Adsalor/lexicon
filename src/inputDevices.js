@@ -144,7 +144,6 @@ class Tile extends Button {
                 context.fillStyle = "white";
                 context.fill();
                 color = displaySettings.playerColors[currentPlayer];
-                console.log("currentPlayer: "+currentPlayer+" color: "+color);
                 context.filter = "opacity(25%)";    //this causes the main color to max out and the other colors to make the tile seem more white
             }
             context.fillStyle = color;

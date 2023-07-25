@@ -1,26 +1,17 @@
 // dictionary.js
 class Dictionary {
-    constructor() {
-        this.dataSet = require('./dataSet');
-    }
-
-    readingFile(filename, callback) {
-        fetch(filename)
-            .then((response) => response.text())
-            .then((data) => {
-                const wordArray = data.trim().split('\n');
-                this.dataSet = new Set(wordArray);
-                callback();
-            })
-            .catch((error) => {
-                console.error('Error reading the file:', error);
-            });
+    constructor(newDict) {
+        this.dataSet = newDict;
     }
 
     verify(word) {
         return this.dataSet.has(word);
     }
+
+    //Later: word scoring functions for AI
 }
+
+const dict = new Dictionary(englishDict);
 
 // html used to run this
 // <!-- index.html -->
