@@ -1,31 +1,23 @@
-const fs = require('fs');
-
+// dictionary.js
 class Dictionary {
-    constructor(dict, dataList) {
-        this.dict = dict;
-        this.dataList = dataList;
+    constructor() {
+        this.dataSet = require('./dataSet');
     }
 
-    // single letter words are valid
     readingFile(filename, callback) {
-        fs.readFile(filename, 'utf8', (err, data) => {
-            if (err) {
-                console.error('Error reading the file:', err);
-                return;
-            }
-            this.dataList = data.trim().split('\n');
-            callback();
-        });
+        fetch(filename)
+            .then((response) => response.text())
+            .then((data) => {
+                const wordArray = data.trim().split('\n');
+                this.dataSet = new Set(wordArray);
+                callback();
+            })
+            .catch((error) => {
+                console.error('Error reading the file:', error);
+            });
     }
 
-    verify(word, dataList) {
-        return dataList.includes(word);
+    verify(word) {
+        return this.dataSet.has(word);
     }
 }
-
-const dict = new Dictionary();
-dict.readingFile("dictionarydb.txt", function() {
-    console.log(dict.verify("abandon", dict.dataList));
-});
-// need to accept input from external source
-// abandon is used as a placeholder
