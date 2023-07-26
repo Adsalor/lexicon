@@ -129,7 +129,7 @@ class Game extends ProgramState {
 
     render(canvas) {
         this.#board.render(canvas,this.#selected,this.#currentPlayer);
-        this.#wordDisplay.#text = this.#word();
+        this.#wordDisplay.setText(this.#word());
         this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
     }
