@@ -1,6 +1,10 @@
 class Display {
     x;
     y;
+    constructor(newX,newY) {
+        this.x = newX;
+        this.y = newY;
+    }
 
     render(canvas) {
         throw new Error("render must be implemented!");
@@ -15,9 +19,8 @@ class Label extends Display {
     
     //TODO: reword fontsize param to scale from min to max based on displaySettings.fontSize
     constructor(text, x, y, fontSize = 16, fontColorLight = 'black', fontColorDark = 'white') {
+        super(x,y);
         this.#text = text;
-        this.x = x;
-        this.y = y;
         this.#fontSize = fontSize;
         this.#fontColorLight = fontColorLight;
         this.#fontColorDark = fontColorDark;
@@ -55,10 +58,9 @@ class Image extends Display {
     height;
 
     constructor(imageSrc, x, y, width, height) {
+        super(x,y);
         this.image = new Image();
         this.image.src = imageSrc;
-        this.x = x;
-        this.y = y;
         this.width = width;
         this.height = height;
     }
