@@ -52,7 +52,7 @@ class Label extends Display {
     }
 }
   
-class Image extends Display {
+class ImageRenderer extends Display {
     image;
     width;
     height;
