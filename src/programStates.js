@@ -1,6 +1,7 @@
 class Program {
     //add your programState to Program.states
     #currentState;
+    states = [];
     constructor() {
         this.states = [mainMenu,game]
         this.#currentState = this.states[0];
@@ -91,7 +92,7 @@ class Game extends ProgramState {
         this.#players = gameSettings.numPlayers;
         this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
-        this.#wordDisplay.text = "";
+        this.#wordDisplay.setText("");
     }
 
     update(input) {
@@ -110,7 +111,7 @@ class Game extends ProgramState {
                 }
                 this.#selected = [];
             } else {
-                this.#wordDisplay.fontColorLight = 'red';
+                this.#wordDisplay.setColor('red');
             }
         } else {
             let newTile = this.#board.update(input);
@@ -122,13 +123,13 @@ class Game extends ProgramState {
                     this.#selected.splice(index,1);
                 }
             }
-            this.#wordDisplay.fontColorLight = 'black';
+            this.#wordDisplay.setColor('default');
         }
     }
 
     render(canvas) {
         this.#board.render(canvas,this.#selected,this.#currentPlayer);
-        this.#wordDisplay.text = this.#word();
+        this.#wordDisplay.#text = this.#word();
         this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
     }

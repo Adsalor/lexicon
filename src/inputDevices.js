@@ -95,7 +95,7 @@ class Tile extends Button {
     }
 
     //hexagon with letter (or capital)
-    renderFull (canvasHandler,currentPlayer,renderMode = 0) {
+    #renderFull (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         let color = 'white';
         if (renderMode == 1) {
@@ -124,7 +124,7 @@ class Tile extends Button {
         context.fillText(this.letter, coordinates[0], coordinates[1]);
     }
     //hexagon without letter
-    renderEmpty (canvasHandler,currentPlayer,renderMode = 0) {
+    #renderEmpty (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
@@ -158,9 +158,9 @@ class Tile extends Button {
     //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
         if (this.letter=='') {
-            this.renderEmpty(canvasHandler,currentPlayer,renderMode);
+            this.#renderEmpty(canvasHandler,currentPlayer,renderMode);
         } else {
-            this.renderFull(canvasHandler,currentPlayer,renderMode);
+            this.#renderFull(canvasHandler,currentPlayer,renderMode);
         }
     }
 }
