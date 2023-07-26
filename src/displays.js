@@ -1,7 +1,14 @@
-class Label {
-    text;
+class Display {
     x;
     y;
+
+    render(canvas) {
+        throw new Error("render must be implemented!");
+    }
+}
+
+class Label extends Display {
+    text;
     fontSize;
     font;
     fontColorLight;
@@ -30,10 +37,8 @@ class Label {
     }
 }
   
-class ImageRenderer {
+class ImageRenderer extends Display {
     image;
-    x;
-    y;
     width;
     height;
 
