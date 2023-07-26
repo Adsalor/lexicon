@@ -43,8 +43,8 @@ class Label extends Display {
 
     setColor(newColor) {
         if (newColor == 'default') {
-            fontColorLight = 'black';
-            fontColorDark = 'white';
+            this.#fontColorLight = 'black';
+            this.#fontColorDark = 'white';
             return;
         }
         if (displaySettings.darkMode) this.#fontColorDark = newColor;
