@@ -6,9 +6,25 @@ class CanvasHandler {
     constructor() {
         this.wide = true;
         this.canvas = $('#Game');
-        this.thresholdResizeCanvas();
+        this.resizeCanvas();
     }
     
+    resizeCanvas() {
+        let width, height;
+        [width,height] = this.maximumResizeCanvas();
+        
+        this.canvas.width(width).height(height);
+        
+        //set canvas internal resolution
+        if (this.wide) {
+            this.canvas.get(0).height = 1080;
+            this.canvas.get(0).width = 1920;
+        } else {
+            this.canvas.get(0).height = 1920;
+            this.canvas.get(0).width = 1080;
+        }
+    }
+
     thresholdResizeCanvas() {
         //if the game canvas does not fit at 16x9, flip canvas to 9x16
         //use portrait display
@@ -16,9 +32,7 @@ class CanvasHandler {
         //header and footer take 10% and 5% of window size respectively
         //minimum height of window is a parameter i'll adjust by testing
         //but once the window needs to shrink below that proportion of window height to maintain 16x9, swap to 9x16
-        let win = $(window);
-        let height = win.height();
-        let width = win.width();
+        let width, height;
     
         let gameArea = $('#gameArea');
         let maxHeight = gameArea.height();
@@ -56,17 +70,8 @@ class CanvasHandler {
             }
             this.wide = true;
         }
-    
-        this.canvas.width(width).height(height);
-        
-        //set canvas internal resolution
-        if (this.wide) {
-            this.canvas.get(0).height = 1080;
-            this.canvas.get(0).width = 1920;
-        } else {
-            this.canvas.get(0).height = 1920;
-            this.canvas.get(0).width = 1080;
-        }
+
+        return [width,height];
     }
 
     clear() {
@@ -75,7 +80,64 @@ class CanvasHandler {
     
     //instead of switching to 9:16 on a threshold, pick whichever aspect ratio maximizes screen area
     maximumResizeCanvas() {
-        //do this later
+        let width, height;
+        let landscapeArea, portraitArea;
+        let lHLimiter, pHLimiter;
+
+        let gameArea = $('#gameArea');
+        let maxHeight = gameArea.height();
+        let maxWidth = gameArea.width();
+
+        //calculate portraitArea
+        //for portrait, we want height to be 16/9 * width
+        //height is limiter if rect is shorter than this: so if height is less than 16/9 * width
+        if (maxWidth * 16 / 9 > maxHeight) {
+            //height is limiter
+            portraitArea = maxHeight * maxHeight * 9/16; //when height is limiter area is (height) * (9/16 * height = width)
+            pHLimiter = true;
+        } else {
+            //width is limiter
+            portraitArea = maxWidth * maxWidth * 16/9; //when width is limiter area is (width) * (16/9 * width = height)
+            pHLimiter = false;
+        }
+
+        //for landscape, we want width to be 16/9 * height
+        //height is limiter when rect is wider than this: so if width is greater than 16/9 * height
+        if (maxWidth > 16 / 9 * maxHeight) {
+            //height is limiter
+            landscapeArea = maxHeight * maxHeight * 16/9; //area is (height) * (16/9 * height = width)
+            lHLimiter = true;
+        } else {
+            //width is limiter
+            landscapeArea = maxWidth * maxWidth * 9/16; //area is (width) * (9/16 * width = height)
+            lHLimiter = false;
+        }
+
+        if (landscapeArea > portraitArea) {
+            //use landscape
+            if (lHLimiter) {
+                height = maxHeight;
+                width = height * 16 / 9;
+            } else {
+                width = maxWidth;
+                height = width * 9 / 16;
+            }
+
+            this.wide = true;
+        } else {
+            //use portrait
+            if (pHLimiter) {
+                height = maxHeight;
+                width = height * 9 / 16;
+            } else {
+                width = maxWidth;
+                height = width * 16 / 9;
+            }
+
+            this.wide = false;
+        }
+
+        return [width,height];
     }
 
     processCoordinates(click) {

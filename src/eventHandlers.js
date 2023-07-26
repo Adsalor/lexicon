@@ -1,9 +1,10 @@
 function onLoad() {
     //stuff that should happen when the window fully loads goes here
+    onResize();
 }
 
 function onResize() {
-    canvas.thresholdResizeCanvas();
+    canvas.resizeCanvas();
     program.render();
 }
 
