@@ -112,7 +112,6 @@ class Switch extends InputDevice {
         this.color = color;
     }
     render(canvasHandler) {
-        console.log(this.bounding);
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the switch container outline
         context.beginPath();
@@ -132,7 +131,6 @@ class Switch extends InputDevice {
         // Draws the switch nob
         let nobBounding = [];
         nobBounding = this.toggle ? this.rightHex : this.leftHex;
-        console.log(nobBounding);
         context.lineWidth = 5;
         context.strokeStyle = 'black';
         context.beginPath();
