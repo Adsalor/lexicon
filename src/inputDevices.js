@@ -76,11 +76,83 @@ class Button extends InputDevice {
 
 class Switch extends InputDevice {
     //for dark/light mode, i.e.
-}
+    leftHex;
+    rightHex;
+    toggle;
 
-class Slider extends InputDevice {
-    //if we need this
-    //we probably won't, but who knows
+    constructor(newMode, x, y, scale, color = 'white'){
+        var newBounding = [];
+        var leftHex = [];
+        var rightHex = [];
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i + (2 * Math.PI / 3);
+            const x1 = x + scale * Math.cos(angle);
+            const y1 = y + scale * Math.sin(angle);
+            leftHex.push([x1,y1]);
+            if(i<3){
+                newBounding.push([x1,y1]);
+            }
+        }
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i - (Math.PI / 3);
+            const x1 = x + scale * (Math.cos(angle)+1);
+            const y1 = y + scale * Math.sin(angle);
+            rightHex.push([x1,y1]);
+            if(i<3){
+                newBounding.push([x1,y1]);
+            }
+        }
+        super(newMode,newBounding);
+        this.x = x;
+        this.y = y;
+        this.size = scale;
+        this.leftHex = leftHex;
+        this.rightHex = rightHex;
+        this.toggle = 0;
+        this.color = color;
+    }
+    render(canvasHandler) {
+        console.log(this.bounding);
+        const context = canvasHandler.canvas.get(0).getContext('2d');
+        // Draws the switch container outline
+        context.beginPath();
+        let coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[0]);
+        context.moveTo(...coordinates);
+  
+        for (let i = 1; i < this.bounding.length; i++) {
+            coordinates = canvasHandler.convertRelativeToCanvas(this.bounding[i]);
+            context.lineTo(...coordinates);
+        }
+  
+        context.closePath();
+
+        context.fillStyle = this.toggle ? 'gray': this.color;
+        context.fill();
+        
+        // Draws the switch nob
+        let nobBounding = [];
+        nobBounding = this.toggle ? this.rightHex : this.leftHex;
+        console.log(nobBounding);
+        context.lineWidth = 5;
+        context.strokeStyle = 'black';
+        context.beginPath();
+        coordinates = canvasHandler.convertRelativeToCanvas(nobBounding[0]);
+        context.moveTo(...coordinates);
+  
+        for (let i = 1; i < nobBounding.length; i++) {
+            coordinates = canvasHandler.convertRelativeToCanvas(nobBounding[i]);
+            context.lineTo(...coordinates);
+        }
+  
+        context.closePath();
+        context.stroke();
+
+        context.fillStyle = this.color;
+        context.fill();
+    }
+    update(input){
+        this.toggle = !this.toggle;
+    }
 }
 
 class Tile extends Button {
