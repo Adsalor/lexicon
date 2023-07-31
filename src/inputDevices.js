@@ -50,7 +50,8 @@ class Button extends InputDevice {
         this.size = scale;
     }
 
-    render(canvasHandler,color = 'white') {
+    render(canvasHandler,color = 'default') {
+        if (color == 'default') color = (displaySettings.darkMode?'black':'white');
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
@@ -108,7 +109,7 @@ class Switch extends InputDevice {
         this.size = scale;
         this.leftHex = leftHex;
         this.rightHex = rightHex;
-        this.toggle = 0;
+        this.toggle = false;
         this.color = color;
     }
     render(canvasHandler) {
@@ -150,6 +151,8 @@ class Switch extends InputDevice {
     }
     update(input){
         this.toggle = !this.toggle;
+        displaySettings.darkMode = this.toggle;
+        displaySettings.updateDarkMode();
     }
 }
 

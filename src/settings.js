@@ -54,4 +54,8 @@ class DisplaySettings {
         localStorage.setItem('fontSize',JSON.stringify(this.fontSize));
         localStorage.setItem('gameSettingsStored','y');
     }
+
+    updateDarkMode() {
+        $("body, body *").toggleClass('darkMode',this.darkMode);
+    }
 }

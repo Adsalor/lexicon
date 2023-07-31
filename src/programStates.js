@@ -3,7 +3,7 @@ class Program {
     #currentState;
     states = [];
     constructor() {
-        this.states = [mainMenu,game]
+        this.states = [mainMenu,game,tempSP,settingsMenu,gameSettingsMenu,displaySettingsMenu]
         this.#currentState = this.states[0];
     }
     update(input) {
