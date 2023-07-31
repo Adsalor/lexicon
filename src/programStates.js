@@ -79,11 +79,15 @@ class Game extends ProgramState {
     #selected = [];
     #wordDisplay;
     #submitButton;
+    #exitButton;
+    #reloadButton;
     #currentPlayer;
     constructor(newLabel) {
         super(newLabel);
         this.#wordDisplay = new Label("",0.5,0.21,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
+        this.#exitButton = new Button("mainMenu",0.9,0.1,0.07);
+        this.#reloadButton = new Button(false,0.1,1.7,0.07);
         this.reload();
     } 
 
@@ -92,10 +96,16 @@ class Game extends ProgramState {
         this.#players = gameSettings.numPlayers;
         this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
+        this.#selected = [];
         this.#wordDisplay.setText("");
     }
 
     update(input) {
+        if (this.#exitButton.overlapping(input)) return this.#exitButton.newState();
+        if (this.#reloadButton.overlapping(input)) {
+            this.reload();
+            return;
+        }
         if (this.#submitButton.overlapping(input)) {
             let word = this.#word().toLowerCase();
             if (dict.verify(word)) {
@@ -132,6 +142,8 @@ class Game extends ProgramState {
         this.#wordDisplay.setText(this.#word());
         this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
+        this.#exitButton.render(canvas);
+        this.#reloadButton.render(canvas);
     }
 
     #word() {
