@@ -51,7 +51,9 @@ class Button extends InputDevice {
     }
 
     render(canvasHandler,color = 'default') {
-        if (color == 'default') color = (displaySettings.darkMode?'black':'white');
+        console.log(displaySettings.darkMode);
+        if (color == 'default') color = (displaySettings.darkMode?'gray':'white');
+        console.log(color);
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
