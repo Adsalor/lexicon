@@ -45,6 +45,7 @@ class DisplaySettings {
             this.playerColors = JSON.parse(localStorage.getItem('playerColors'));
             this.fontSize = JSON.parse(localStorage.getItem('fontSize'));
         }
+        this.updateDarkMode();
     }
 
     exportSave() {
