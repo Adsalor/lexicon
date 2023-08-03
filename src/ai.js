@@ -1,4 +1,10 @@
 class AI {
+    mostRecentWord;
+
+    constructor() {
+        this.mostRecentWord = [];
+    }
+
     utilityScore(selectedTiles,board,player,tile) {
         //calculate utility score of tile
         //tile is useful if helps expand our territory
@@ -104,7 +110,8 @@ class AI {
         //driver for recursive function
         console.log("beginning search for word to play");
         let chosenTiles = [];
-        return this.pickTile(chosenTiles,board,player);
+        this.mostRecentWord = this.pickTile(chosenTiles,board,player);
+        return this.mostRecentWord;
     }
 
     #word(selectedTiles) {

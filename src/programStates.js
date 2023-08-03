@@ -3,7 +3,7 @@ class Program {
     #currentState;
     states = [];
     constructor() {
-        this.states = [mainMenu,game,tempSP,settingsMenu,gameSettingsMenu,displaySettingsMenu]
+        this.states = [mainMenu,game,singleplayer,settingsMenu,gameSettingsMenu,displaySettingsMenu]
         this.#currentState = this.states[0];
     }
     update(input) {
@@ -74,6 +74,7 @@ class Menu extends ProgramState {
 
 class Game extends ProgramState {
     #board;
+    #people; //people is number of actual humans playing, vs players which includes AI plays
     #players;
     #eliminatedPlayers;
     #selected = [];
@@ -82,8 +83,11 @@ class Game extends ProgramState {
     #exitButton;
     #reloadButton;
     #currentPlayer;
-    constructor(newLabel) {
+    #ai;
+    constructor(newLabel,numPeople = gameSettings.numPlayers) {
         super(newLabel);
+        this.#ai = new AI();
+        this.#people = numPeople;
         this.#wordDisplay = new Label("",0.5,0.21,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
         this.#exitButton = new Button("mainMenu",0.9,0.1,0.07);
@@ -92,7 +96,8 @@ class Game extends ProgramState {
     } 
 
     reload() {
-        this.#board = new Board(gameSettings.boardLayout);
+        if (this.#people == 1) this.#board = new Board(gameSettings.singleplayerLayout);
+        else this.#board = new Board(gameSettings.boardLayout);
         this.#players = gameSettings.numPlayers;
         this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
@@ -101,7 +106,23 @@ class Game extends ProgramState {
     }
 
     update(input) {
-        if (this.#exitButton.overlapping(input)) return this.#exitButton.newState();
+        let exiting = this.#exitButton.overlapping(input);
+        if (this.#currentPlayer >= this.#people) {
+            if (exiting) {
+                this.#board.playTiles(this.#ai.mostRecentWord,this.#currentPlayer);
+                this.#advancePlayer();
+                return this.#exitButton.newState(); //if player quits while AI playing, play the word out
+            } else {
+                if (this.#selected.length != this.#ai.mostRecentWord.length) {
+                    this.#selected.push(this.#ai.mostRecentWord[this.#selected.length]);
+                } else {
+                    this.#board.playTiles(this.#selected,this.#currentPlayer);
+                    this.#advancePlayer();
+                }
+            }
+            return; //no input while the AI is doing its thing
+        }
+        if (exiting) return this.#exitButton.newState();
         if (this.#reloadButton.overlapping(input)) {
             this.reload();
             return;
@@ -110,16 +131,10 @@ class Game extends ProgramState {
             let word = this.#word().toLowerCase();
             if (dict.verify(word)) {
                 this.#board.playTiles(this.#selected,this.#currentPlayer);
-                for (let i = 0; i < this.#players; i++) {
-                    if (this.#board.isEliminated(i)) this.#eliminatedPlayers.push(i);
-                }
-                do {
-                    this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
-                } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
+                this.#advancePlayer();
                 if (this.#eliminatedPlayers.length == this.#players - 1) {
                     //victory screen!
                 }
-                this.#selected = [];
             } else {
                 this.#wordDisplay.setColor('red');
             }
@@ -144,6 +159,17 @@ class Game extends ProgramState {
         this.#submitButton.render(canvas);
         this.#exitButton.render(canvas);
         this.#reloadButton.render(canvas);
+    }
+
+    #advancePlayer() {
+        this.#selected = [];
+        for (let i = 0; i < this.#players; i++) {
+            if (this.#board.isEliminated(i)) this.#eliminatedPlayers.push(i);
+        }
+        do {
+            this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
+        } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
+        if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
     }
 
     #word() {

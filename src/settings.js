@@ -23,6 +23,11 @@ class GameSettings {
         localStorage.setItem('boardLayout',JSON.stringify(this.boardLayout));
         localStorage.setItem('displayStored',"y");
     }
+
+    get singleplayerLayout() {
+        if (this.numPlayers == 2) return this.boardLayout;
+        else return new BoardLayout();
+    }
 }
 
 class DisplaySettings {
