@@ -6,3 +6,4 @@ var displaySettings = new DisplaySettings();
 //var button = new Button(false,1,16/9,0.1);
 var game = new Game("game");
 var program = new Program();
+var ai = new AI();

@@ -51,9 +51,7 @@ class Button extends InputDevice {
     }
 
     render(canvasHandler,color = 'default') {
-        console.log(displaySettings.darkMode);
         if (color == 'default') color = (displaySettings.darkMode?'gray':'white');
-        console.log(color);
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
@@ -237,5 +235,10 @@ class Tile extends Button {
         } else {
             this.#renderFull(canvasHandler,currentPlayer,renderMode);
         }
+    }
+
+    get capitalOf() {
+        if (this.isCapital) return this.player;
+        else return 0;
     }
 }

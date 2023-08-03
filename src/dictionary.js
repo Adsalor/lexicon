@@ -1,38 +1,25 @@
-// dictionary.js
 class Dictionary {
     constructor(newDict) {
         this.dataSet = newDict;
     }
 
     verify(word) {
-        return this.dataSet.has(word);
+        return this.dataSet.includes(word.toLowerCase());
     }
 
-    //Later: word scoring functions for AI
+    //AI functionality
+    getNextLetterDist(snippet) {
+        snippet = snippet.toLowerCase();
+        let charMap = {};
+        for (const char of "abcdefghijklmnopqrstuvwxyz") charMap[char] = 0;
+        for (const word of this.dataSet) {
+            if (word <= snippet) continue;
+            if (word.startsWith(snippet)) {
+                charMap[word[snippet.length]]++;
+            } else break;
+        }
+        return charMap;
+    }
 }
 
 const dict = new Dictionary(englishDict);
-
-// html used to run this
-// <!-- index.html -->
-// <!DOCTYPE html>
-// <html>
-
-// <head>
-//     <title>Dictionary Verification</title>
-// </head>
-
-// <body>
-//     <h1>Dictionary Verification</h1>
-//     <form id="wordForm">
-//         <label for="wordInput">Enter a word to verify:</label>
-//         <input type="text" id="wordInput" required>
-//         <button type="submit">Verify</button>
-//     </form>
-
-//     <div id="result"></div>
-
-//     <script src="dictionary.js"></script>
-// </body>
-
-// </html>

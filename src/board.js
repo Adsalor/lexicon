@@ -77,7 +77,7 @@ class Board {
 
     render(canvas,selectedTiles,player) {
         let expansible,adjacent;
-        [expansible,adjacent] = this.#processTiles(selectedTiles,player);
+        [expansible,adjacent] = this.processTiles(selectedTiles,player);
 
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
@@ -118,7 +118,7 @@ class Board {
         return output;
     }
 
-    #adjacentTilesToTile(tile) {
+    adjacentTilesToTile(tile) {
         for (let i = 0; i < this.tiles.length; i++) {
             let j = this.tiles[i].indexOf(tile);
             if (j == -1) continue;
@@ -160,7 +160,7 @@ class Board {
 
     //returns the set of tiles from selected tiles which will be expanded to
     //and the set of tiles which is adjacent to those tiles
-    #processTiles(selectedTiles,player) {
+    processTiles(selectedTiles,player) {
         var expansible = [];
         var expandAdjacent = [];
 
@@ -173,7 +173,7 @@ class Board {
             for (let i = 0; i < selectedTiles.length; i++) {
                 const currentTile = selectedTiles[i];
                 if (expansible.includes(currentTile)) continue;
-                let adjacencies = this.#adjacentTilesToTile(currentTile);
+                let adjacencies = this.adjacentTilesToTile(currentTile);
                 if (adjacencies.some(tile => (expansible.includes(tile) || tile.territoryOf === player + 1))) {
                     expansible.push(currentTile);
                     newTilesFound = true;
@@ -184,7 +184,7 @@ class Board {
         //to get adjacent tiles to expansible tiles, just combine all the sets of tiles adjacent to each
         //expansible tile with tiles owned by the same player and expansible tiles filtered out
         for (const tile of expansible) {
-            let fullAdjacencies = this.#adjacentTilesToTile(tile);
+            let fullAdjacencies = this.adjacentTilesToTile(tile);
             //combine arrays after filtering out already owned tiles
             expandAdjacent = [...new Set([...expandAdjacent,...fullAdjacencies.filter(tile => 
                 (tile.territoryOf != player + 1 && !expansible.includes(tile) && tile.letter === ''))])];
@@ -195,7 +195,7 @@ class Board {
 
     playTiles(selectedTiles,player) {
         let expansible,adjacent;
-        [expansible,adjacent] = this.#processTiles(selectedTiles,player);
+        [expansible,adjacent] = this.processTiles(selectedTiles,player);
 
         for (let tile of selectedTiles) {
             if (expansible.includes(tile)) {
@@ -214,12 +214,38 @@ class Board {
         this.#resetNonAdjacent();
     }
 
-    #generateLetter() {
-        return this.#fullyRandomNewLetter();
-    }
-
     isEliminated(player) {
         return !this.tiles.some(col => col.some(tile => tile.territoryOf == player + 1));
+    }
+
+    //AI and letter generation stuff
+    availableLetterDist(player,selectedTiles = []) {
+        let charMap = {};
+        for (const char of "abcdefghijklmnopqrstuvwxyz") charMap[char] = 0;
+        for (const col of this.tiles) {
+            for (const tile of col) {
+                if (!selectedTiles.includes(tile) && !tile.territoryOf && tile.letter) {
+                    let weight = 1;
+                    if (this.adjacentTilesToTile(tile).some((adj) => adj.territoryOf == player + 1)) weight += 1;
+                    charMap[tile.letter.toLowerCase()] += weight;
+                }
+            }
+        }
+        return charMap;
+    }
+
+    tilesWithLetter(letter) {
+        let result = [];
+        for (const col of this.tiles) {
+            for (const tile of col) {
+                if (!tile.territoryOf && tile.letter.toLowerCase() == letter) result.push(tile);
+            }
+        }
+        return result;
+    }
+
+    #generateLetter() {
+        return this.#fullyRandomNewLetter();
     }
 
     //fully random
