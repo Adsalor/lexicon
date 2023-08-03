@@ -4,7 +4,7 @@ class Dictionary {
     }
 
     verify(word) {
-        return this.dataSet.includes(word.toLowerCase());
+        return this.dataSet.has(word.toLowerCase());
     }
 
     //AI functionality

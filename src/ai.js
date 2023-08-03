@@ -67,7 +67,7 @@ class AI {
                 selectedTiles.pop();
                 continue;
             }
-            return result;
+            if (true/*utility of word is above certain amount*/) return result;
         }
 
         //if no extension is possible, if what we've got is a word, great
