@@ -81,24 +81,24 @@ class Game extends ProgramState {
     #wordDisplay;
     #submitButton;
     #exitButton;
-    #reloadButton;
     #currentPlayer;
+    #turner;
     #ai;
     constructor(newLabel,numPeople = gameSettings.numPlayers) {
         super(newLabel);
         this.#ai = new AI();
         this.#people = numPeople;
-        this.#wordDisplay = new Label("",0.5,0.21,90);
+        this.#wordDisplay = new Label("",0.5,0.32,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
         this.#exitButton = new Button("mainMenu",0.9,0.1,0.07);
-        this.#reloadButton = new Button(false,0.1,1.7,0.07);
         this.reload();
     } 
 
     reload() {
-        if (this.#people == 1) this.#board = new Board(gameSettings.singleplayerLayout);
-        else this.#board = new Board(gameSettings.boardLayout);
+        if (this.#people == 1) this.#board = new Board(gameSettings.singleplayerLayout,10/9);
+        else this.#board = new Board(gameSettings.boardLayout,10/9);
         this.#players = gameSettings.numPlayers;
+        this.#turner = new TurnIndicator(0.5,0.15,0.05,this.#players);
         this.#eliminatedPlayers = [];
         this.#currentPlayer = 0;
         this.#selected = [];
@@ -123,10 +123,6 @@ class Game extends ProgramState {
             return; //no input while the AI is doing its thing
         }
         if (exiting) return this.#exitButton.newState();
-        if (this.#reloadButton.overlapping(input)) {
-            this.reload();
-            return;
-        }
         if (this.#submitButton.overlapping(input)) {
             let word = this.#word().toLowerCase();
             if (dict.verify(word)) {
@@ -158,18 +154,22 @@ class Game extends ProgramState {
         this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
         this.#exitButton.render(canvas);
-        this.#reloadButton.render(canvas);
+        this.#turner.render(canvas);
     }
 
     #advancePlayer() {
         this.#selected = [];
         for (let i = 0; i < this.#players; i++) {
-            if (this.#board.isEliminated(i)) this.#eliminatedPlayers.push(i);
+            if (!this.#eliminatedPlayers.includes(i) && this.#board.isEliminated(i)) {
+                this.#eliminatedPlayers.push(i);
+                this.#turner.eliminatePlayer(i);
+            }
         }
         do {
             this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
         } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
         if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
+        this.#turner.setTurn(this.#currentPlayer);
     }
 
     #word() {

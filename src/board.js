@@ -28,7 +28,7 @@ class Board {
     size;
 
     //construction of a new board uses the selected board layout
-    constructor(layout) {
+    constructor(layout,centerY = 8/9) {
         this.size = layout.size;
         //the hexagon flat side will be directed along the shorter side
         //we want the hexagons to use the full width of the shorter side
@@ -55,7 +55,7 @@ class Board {
                 //2*(hexes in large column) - 1 possible slots
                 //middle slot = 8/9, rest are off by innerRadius
                 //even height columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
-                let y = 8/9 + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddOffset) % 2) * innerRadius;
+                let y = centerY + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddOffset) % 2) * innerRadius;
 
                 let newTile;
                 if (layout.tileStates[i][j] > 0) {
