@@ -109,15 +109,18 @@ class Game extends ProgramState {
         let exiting = this.#exitButton.overlapping(input);
         if (this.#currentPlayer >= this.#people) {
             if (exiting) {
-                this.#board.playTiles(this.#ai.mostRecentWord,this.#currentPlayer);
-                this.#advancePlayer();
+                let capitalCaptured = this.#board.playTiles(this.#ai.mostRecentWord,this.#currentPlayer);
+                this.#advancePlayer(capitalCaptured);
                 return this.#exitButton.newState(); //if player quits while AI playing, play the word out
             } else {
                 if (this.#selected.length != this.#ai.mostRecentWord.length) {
                     this.#selected.push(this.#ai.mostRecentWord[this.#selected.length]);
                 } else {
-                    this.#board.playTiles(this.#selected,this.#currentPlayer);
-                    this.#advancePlayer();
+                    let capitalCaptured = this.#board.playTiles(this.#selected,this.#currentPlayer);
+                    this.#advancePlayer(capitalCaptured);
+                    if (this.#eliminatedPlayers.length == this.#players - 1) {
+                        //loss screen :(
+                    }
                 }
             }
             return; //no input while the AI is doing its thing
@@ -126,8 +129,8 @@ class Game extends ProgramState {
         if (this.#submitButton.overlapping(input)) {
             let word = this.#word().toLowerCase();
             if (dict.verify(word)) {
-                this.#board.playTiles(this.#selected,this.#currentPlayer);
-                this.#advancePlayer();
+                let capitalCaptured = this.#board.playTiles(this.#selected,this.#currentPlayer);
+                this.#advancePlayer(capitalCaptured);
                 if (this.#eliminatedPlayers.length == this.#players - 1) {
                     //victory screen!
                 }
@@ -149,6 +152,7 @@ class Game extends ProgramState {
     }
 
     render(canvas) {
+        //draw all the things on the board
         this.#board.render(canvas,this.#selected,this.#currentPlayer);
         this.#wordDisplay.setText(this.#word());
         this.#wordDisplay.render(canvas);
@@ -157,7 +161,7 @@ class Game extends ProgramState {
         this.#turner.render(canvas);
     }
 
-    #advancePlayer() {
+    #advancePlayer(capitalCaptured) {
         this.#selected = [];
         for (let i = 0; i < this.#players; i++) {
             if (!this.#eliminatedPlayers.includes(i) && this.#board.isEliminated(i)) {
@@ -165,10 +169,13 @@ class Game extends ProgramState {
                 this.#turner.eliminatePlayer(i);
             }
         }
-        do {
-            this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
-        } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
-        if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
+        if (!capitalCaptured) {
+            this.#board.regenerateCapitals();
+            do {
+                this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
+            } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
+            if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
+        }
         this.#turner.setTurn(this.#currentPlayer);
     }
 

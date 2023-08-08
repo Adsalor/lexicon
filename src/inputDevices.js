@@ -238,7 +238,6 @@ class Tile extends Button {
     }
 
     get capitalOf() {
-        if (this.isCapital) return this.player;
-        else return 0;
+        return (this.isCapital?this.territoryOf:0);
     }
 }
