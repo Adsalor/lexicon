@@ -30,10 +30,21 @@ class Label extends Display {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         const fontColor = displaySettings.darkMode ? this.#fontColorDark : this.#fontColorLight;
         context.fillStyle = fontColor;
-        context.font = `${this.#fontSize}px Arial`;
+
+        if (canvasHandler.wide) {
+            // Adjust font size for landscape mode
+            const landscapeWidth = canvasHandler.canvas.width();
+            const landscapeFontSize = this.#fontSize * (landscapeWidth / 1920); // Assuming 1920 as default width
+
+            context.font = `${landscapeFontSize}px Arial`;
+        } else {
+            context.font = `${this.#fontSize}px Arial`;
+        }
+
         context.textAlign = 'center';
         context.textBaseline = 'middle';
-        let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y])
+
+        let coordinates = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
         context.fillText(this.#text, ...coordinates);
     }
 
@@ -58,7 +69,7 @@ class ImageRenderer extends Display {
     height;
 
     constructor(imageSrc, x, y, width, height) {
-        super(x,y);
+        super(x, y);
         this.image = new Image();
         this.image.src = imageSrc;
         this.width = width;
@@ -67,7 +78,20 @@ class ImageRenderer extends Display {
   
     render(canvasHandler) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
-        let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y])
+        let coordinates = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
+
+        if (canvasHandler.wide) {
+            // Adjust coordinates and sizes for landscape mode
+            const landscapeWidth = canvasHandler.canvas.width();
+            const landscapeHeight = canvasHandler.canvas.height();
+            const portraitHeight = landscapeWidth * (9 / 16);
+
+            coordinates[0] *= landscapeWidth / portraitHeight;
+            coordinates[1] *= landscapeWidth / portraitHeight;
+            this.width *= landscapeWidth / portraitHeight;
+            this.height *= landscapeWidth / portraitHeight;
+        }
+
         context.drawImage(this.image, ...coordinates, this.width, this.height);
     }
 }
