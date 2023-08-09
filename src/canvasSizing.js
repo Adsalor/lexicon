@@ -1,7 +1,7 @@
 class CanvasHandler {
     //"singleton" that runs on window launch, handles canvas resizing and also handles raw input parsing
-    wide
-    canvas
+    wide;
+    canvas;
 
     constructor() {
         this.wide = true;

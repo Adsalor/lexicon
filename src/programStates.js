@@ -78,7 +78,7 @@ class PreGameMenu extends Menu {
     constructor(newLabel, targetGame) {
         let button = new Button(false,0.5,1.1,0.1);
         let devices = [new Button("mainMenu",0.1,0.1,0.07), new Button(targetGame.ID(),0.5,0.8,0.1), button];
-        let displays = [new Label("return to menu",0.15,0.2,50), new Label("Play",0.5,0.8,50), new Label("Reset",0.5,1.1,50)];
+        let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2), new Label("Play",0.5,0.8,50), new Label("Reset",0.5,1.1,50)];
         super(newLabel,devices,displays);
         this.resetButton = button;
         this.targetGame = targetGame;

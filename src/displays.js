@@ -3,12 +3,14 @@ class Display {
     yLandscape;
     xPortrait;
     yPortrait;
+    wide;
 
-    constructor(xLandscape, yLandscape, xPortrait, yPortrait) {
+    constructor(xPortrait, yPortrait, xLandscape = yPortrait, yLandscape = xPortrait) {
         this.xLandscape = xLandscape;
         this.yLandscape = yLandscape;
         this.xPortrait = xPortrait;
         this.yPortrait = yPortrait;
+        this.wide = false;
     }
 
     get x() {
@@ -31,8 +33,8 @@ class Label extends Display {
     #fontColorDark;
     
     //TODO: reword fontsize param to scale from min to max based on displaySettings.fontSize
-    constructor(text, x, y, fontSize = 16, fontColorLight = 'black', fontColorDark = 'white') {
-        super(x,y);
+    constructor(text, x, y, fontSize = 50, xL=y, yL=x, fontColorLight = 'black', fontColorDark = 'white') {
+        super(x,y,xL,yL);
         this.#text = text;
         this.#fontSize = fontSize;
         this.#fontColorLight = fontColorLight;
@@ -40,21 +42,12 @@ class Label extends Display {
     }
   
     render(canvasHandler) {
+        this.wide = canvasHandler.wide;
         const context = canvasHandler.canvas.get(0).getContext('2d');
         const fontColor = displaySettings.darkMode ? this.#fontColorDark : this.#fontColorLight;
         context.fillStyle = fontColor;
 
-        const [x, y] = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
-
-        if (canvasHandler.wide) {
-            // Adjust font size for landscape mode
-            const landscapeWidth = canvasHandler.canvas.width();
-            const landscapeFontSize = this.#fontSize * (landscapeWidth / 1920); // Assuming 1920 as default width
-
-            context.font = `${landscapeFontSize}px Arial`;
-        } else {
-            context.font = `${this.#fontSize}px Arial`;
-        }
+        context.font = `${this.#fontSize}px Arial`;
 
         context.textAlign = 'center';
         context.textBaseline = 'middle';
@@ -83,8 +76,8 @@ class ImageRenderer extends Display {
     width;
     height;
 
-    constructor(imageSrc, x, y, width, height) {
-        super(x, y);
+    constructor(imageSrc, x, y, width, height,xL=y,yL=x) {
+        super(x, y, xL, yL);
         this.image = new Image();
         this.image.src = imageSrc;
         this.width = width;
@@ -92,25 +85,18 @@ class ImageRenderer extends Display {
     }
   
     render(canvasHandler) {
+        this.wide = canvasHandler.wide;
+
         const context = canvasHandler.canvas.get(0).getContext('2d');
-        let [x, y, width, height] = canvasHandler.convertRelativeToCanvas([this.x, this.y, this.width, this.height]);
         let coordinates = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
+        let height = canvasHandler.convertRelLengthToCanvas(this.height);
+        let width = canvasHandler.convertRelLengthToCanvas(this.width);
 
-        if (canvasHandler.wide) {
-            // Adjust coordinates and sizes for landscape mode
-            const landscapeWidth = canvasHandler.canvas.width();
-            const landscapeHeight = canvasHandler.canvas.height();
-            const portraitHeight = landscapeWidth * (9 / 16);
-
-            coordinates[0] *= landscapeWidth / portraitHeight;
-            coordinates[1] *= landscapeWidth / portraitHeight;
-            this.width *= landscapeWidth / portraitHeight;
-            this.height *= landscapeWidth / portraitHeight;
-        }
-
-        context.drawImage(this.image, ...coordinates, this.width, this.height);
+        context.drawImage(this.image, ...coordinates, width, height);
     }
 }
+
+//ahna don't touch these two, i'll handle them later
 
 class Hex extends Display {
     size;
