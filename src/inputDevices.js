@@ -167,7 +167,7 @@ class Tile extends Button {
         this.territoryOf = player;   //tiles are owned by a player
     }
 
-    //hexagon with letter (or capital)
+    //hexagon with letter
     #renderFull (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         let color = 'white';
@@ -222,6 +222,15 @@ class Tile extends Button {
             context.fillStyle = color;
             context.fill();
             context.filter = "none";
+            if(this.isCapital){
+                let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y]);
+                let fontSize = Math.round((540 + displaySettings.fontSize*900)*this.size);
+                context.fillStyle = 'white';
+                context.font = 'bold ' + fontSize+'px Arial';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText("♔", coordinates[0], coordinates[1]);
+            }
         } else {
             context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
             context.stroke();
