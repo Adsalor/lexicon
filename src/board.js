@@ -60,7 +60,6 @@ class Board {
                 let newTile;
                 if (layout.tileStates[i][j] > 0) {
                     newTile = new Tile('',x,y,sideLength*0.95,layout.tileStates[i][j]);
-                    newTile.isCapital = true;
                 } else if (layout.tileStates[i][j] === 0) {
                     newTile = new Tile(this.#generateLetter(),x,y,sideLength * 0.95);
                 } else {
@@ -207,54 +206,12 @@ class Board {
             }
         }
 
-        let capitalCaptured = false;
-
         for (let tile of adjacent) {
             tile.territoryOf = 0;
-            if (tile.isCapital) {
-                capitalCaptured = true;
-                tile.isCapital = false;
-            }
             tile.letter = this.#generateLetter();
         }
 
         this.#resetNonAdjacent();
-
-        return capitalCaptured;
-    }
-
-    regenerateCapitals() {
-        //check that each player in the game has a capital
-        //if not, regenerate their capital by making the tile adjacent to fewest borders a capital
-        let playersInGame = new Set();
-        let playersHaveCapital = new Set();
-
-        //identify players and players with capitals
-        for (const col of this.tiles) {
-            for (const tile of col) {
-                if (tile.territoryOf) playersInGame.add(tile.territoryOf);
-                if (tile.capitalOf) playersHaveCapital.add(tile.capitalOf);
-            }
-        }
-
-        //set subtract for players who need capitals
-        let playersNeedRegen = [...playersInGame].filter((player) => !playersHaveCapital.has(player));
-
-        //give each player a new capital
-        for (const player of playersNeedRegen) {
-            let territory = [];
-
-            //find all tiles of player territory
-            for (const col of this.tiles) {
-                for (const tile of col) {
-                    if (tile.territoryOf == player) territory.push(tile);
-                }
-            }
-
-            //the new capital is the tile in the player's territory adjacent to the most other tiles of theirs
-            const newCapital = territory.reduce((prev,current) => ((this.adjacentTilesToTile(prev).filter((tile) => (tile.territoryOf == player)).length < this.adjacentTilesToTile(current).filter((tile) => (tile.territoryOf == player)).length)?current:prev))
-            newCapital.isCapital = true;
-        }
     }
 
     isEliminated(player) {

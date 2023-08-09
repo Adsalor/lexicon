@@ -1,11 +1,9 @@
 class InputDevice {
     #newState //whether should update to new program state on interaction, can be false or string representing new state
     bounding
-    wide
     constructor(newMode,newBounding) {
         this.#newState = newMode;
         this.bounding = newBounding;
-        this.wide=false;
     }
     render(canvas) {
         throw new Error("Render method must be implemented!")
@@ -31,14 +29,6 @@ class InputDevice {
     newState() {
         return this.#newState;
     }
-
-    changeBounding(){  //changes the bounding from portrait to landscape (or vice versa)
-        for (let i = 0; i < this.bounding.length; i++) {
-            const temp = this.bounding[i][0];
-            this.bounding[i][0]=this.bounding[i][1];
-            this.bounding[i][1]=temp;
-        }
-    }
 }
 
 class Button extends InputDevice {
@@ -60,18 +50,7 @@ class Button extends InputDevice {
         this.size = scale;
     }
 
-    changeBounding(){
-        super.changeBounding();
-        const temp = this.x;
-        this.x=this.y;
-        this.y=temp;
-    }
-
     render(canvasHandler,color = 'default') {
-        if(canvasHandler.wide!=this.wide){
-            this.changeBounding();
-            this.wide=canvasHandler.wide;
-        }
         if (color == 'default') color = (displaySettings.darkMode?'gray':'white');
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
@@ -188,7 +167,7 @@ class Tile extends Button {
         this.territoryOf = player;   //tiles are owned by a player
     }
 
-    //hexagon with letter
+    //hexagon with letter (or capital)
     #renderFull (canvasHandler,currentPlayer,renderMode = 0) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         let color = 'white';
@@ -243,15 +222,6 @@ class Tile extends Button {
             context.fillStyle = color;
             context.fill();
             context.filter = "none";
-            if(this.isCapital){
-                let coordinates = canvasHandler.convertRelativeToCanvas([this.x,this.y]);
-                let fontSize = Math.round((540 + displaySettings.fontSize*900)*this.size);
-                context.fillStyle = 'white';
-                context.font = 'bold ' + fontSize+'px Arial';
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                context.fillText("♔", coordinates[0], coordinates[1]);
-            }
         } else {
             context.lineWidth = canvasHandler.convertRelLengthToCanvas(this.size * 0.05);
             context.stroke();
@@ -260,10 +230,6 @@ class Tile extends Button {
 
     //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
-        if(canvasHandler.wide!=this.wide){
-            this.changeBounding();
-            this.wide=canvasHandler.wide;
-        }
         if (this.letter=='') {
             this.#renderEmpty(canvasHandler,currentPlayer,renderMode);
         } else {
@@ -272,6 +238,7 @@ class Tile extends Button {
     }
 
     get capitalOf() {
-        return (this.isCapital?this.territoryOf:0);
+        if (this.isCapital) return this.player;
+        else return 0;
     }
 }
