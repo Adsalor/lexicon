@@ -1,9 +1,22 @@
 class Display {
-    x;
-    y;
-    constructor(newX,newY) {
-        this.x = newX;
-        this.y = newY;
+    xLandscape;
+    yLandscape;
+    xPortrait;
+    yPortrait;
+
+    constructor(xLandscape, yLandscape, xPortrait, yPortrait) {
+        this.xLandscape = xLandscape;
+        this.yLandscape = yLandscape;
+        this.xPortrait = xPortrait;
+        this.yPortrait = yPortrait;
+    }
+
+    get x() {
+        return this.wide ? this.xLandscape : this.xPortrait;
+    }
+
+    get y() {
+        return this.wide ? this.yLandscape : this.yPortrait;
     }
 
     render(canvas) {
@@ -30,6 +43,8 @@ class Label extends Display {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         const fontColor = displaySettings.darkMode ? this.#fontColorDark : this.#fontColorLight;
         context.fillStyle = fontColor;
+
+        const [x, y] = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
 
         if (canvasHandler.wide) {
             // Adjust font size for landscape mode
@@ -78,6 +93,7 @@ class ImageRenderer extends Display {
   
     render(canvasHandler) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
+        let [x, y, width, height] = canvasHandler.convertRelativeToCanvas([this.x, this.y, this.width, this.height]);
         let coordinates = canvasHandler.convertRelativeToCanvas([this.x, this.y]);
 
         if (canvasHandler.wide) {
