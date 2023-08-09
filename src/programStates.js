@@ -3,7 +3,7 @@ class Program {
     #currentState;
     states = [];
     constructor() {
-        this.states = [mainMenu,game,singleplayer,settingsMenu,gameSettingsMenu,displaySettingsMenu]
+        this.states = [mainMenu,game,singleplayer,settingsMenu,gameSettingsMenu,displaySettingsMenu,MPgameMenu,SPgameMenu];
         this.#currentState = this.states[0];
     }
     update(input) {
@@ -72,25 +72,101 @@ class Menu extends ProgramState {
     }
 }
 
+class PreGameMenu extends Menu {
+    targetGame;
+    resetButton;
+    constructor(newLabel, targetGame) {
+        let button = new Button(false,0.5,1.1,0.1);
+        let devices = [new Button("mainMenu",0.1,0.1,0.07), new Button(targetGame.ID(),0.5,0.8,0.1), button];
+        let displays = [new Label("return to menu",0.15,0.2,50), new Label("Play",0.5,0.8,50), new Label("Reset",0.5,1.1,50)];
+        super(newLabel,devices,displays);
+        this.resetButton = button;
+        this.targetGame = targetGame;
+    }
+    update(input) {
+        if (this.resetButton.overlapping(input)) {
+            this.targetGame.reload();
+        }
+        return super.update(input);
+    }
+}
+
+class GameSettingsMenu extends Menu {
+    playerUpButton;
+    playerDownButton;
+    playerCountDisplay;
+    boardWidthUpButton;
+    boardWidthDownButton;
+    boardWidthDisplay;
+    boardHeightUpButton;
+    boardHeightDownButton;
+    boardHeightDisplay;
+    constructor(newLabel) {
+        let pUB = new Button(false,0.9,0.4,0.05);
+        let pDB = new Button(false,0.6,0.4,0.05);
+        let pCD = new Label(gameSettings.numPlayers.toString(),0.75,0.4,50);
+        let bWUB = new Button(false,0.9,0.7,0.05);
+        let bWDB = new Button(false,0.6,0.7,0.05);
+        let bWD = new Label(gameSettings.boardSize[0].toString(),0.75,0.7,50);
+        let bHUB = new Button(false,0.9,1.0,0.05);
+        let bHDB = new Button(false,0.6,1.0,0.05);
+        let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,0.7,50);
+        
+        let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
+        let displays = [new Label("return to menu",0.15,0.2,50),new Label("Player Count",0.3,0.4,70),
+            new Label("Board Width",0.3,0.7,70),new Label("Board Height",0.3,1.0,70),pCD,bWD,bHD];
+        
+        super(newLabel,devices,displays);
+        this.playerUpButton = pUB;
+        this.playerDownButton = pDB;
+        this.boardWidthUpButton = bWUB;
+        this.boardWidthDownButton = bWDB;
+        this.boardHeightUpButton = bHUB;
+        this.boardHeightDownButton = bHDB;
+        this.playerCountDisplay = pCD;
+        this.boardWidthDisplay = bWD;
+        this.boardHeightDisplay = bHD;
+    }
+
+    update(input) {
+        if (this.playerUpButton.overlapping(input)) {
+            //increase player count
+        } else if (this.playerDownButton.overlapping(input)) {
+            //decrease player count
+        } else if (this.boardWidthUpButton.overlapping(input)) {
+            //increase board width
+        } else if (this.boardWidthDownButton.overlapping(input)) {
+            //decrease board width
+        } else if (this.boardHeightUpButton.overlapping(input)) {
+            //increase board height
+        } else if (this.boardHeightDownButton.overlapping(input)) {
+            //decrease board height
+        } else {
+            return super.update(input); //update for new menu state
+        }
+        return; // if we clicked one of the settings buttons we didn't click exit
+    }
+}
+
 class Game extends ProgramState {
     #board;
     #people; //people is number of actual humans playing, vs players which includes AI plays
     #players;
     #eliminatedPlayers;
-    #selected = [];
+    #selected;
     #wordDisplay;
     #submitButton;
     #exitButton;
     #currentPlayer;
     #turner;
     #ai;
-    constructor(newLabel,numPeople = gameSettings.numPlayers) {
+    constructor(newLabel,aboveMenu = "mainMenu",numPeople = gameSettings.numPlayers) {
         super(newLabel);
         this.#ai = new AI();
         this.#people = numPeople;
         this.#wordDisplay = new Label("",0.5,0.32,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
-        this.#exitButton = new Button("mainMenu",0.9,0.1,0.07);
+        this.#exitButton = new Button(aboveMenu,0.9,0.1,0.07);
         this.reload();
     } 
 
