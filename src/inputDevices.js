@@ -1,9 +1,11 @@
 class InputDevice {
     #newState //whether should update to new program state on interaction, can be false or string representing new state
     bounding
+    wide
     constructor(newMode,newBounding) {
         this.#newState = newMode;
         this.bounding = newBounding;
+        this.wide=false;
     }
     render(canvas) {
         throw new Error("Render method must be implemented!")
@@ -29,6 +31,14 @@ class InputDevice {
     newState() {
         return this.#newState;
     }
+
+    changeBounding(){  //changes the bounding from portrait to landscape (or vice versa)
+        for (let i = 0; i < this.bounding.length; i++) {
+            const temp = this.bounding[i][0];
+            this.bounding[i][0]=this.bounding[i][1];
+            this.bounding[i][1]=temp;
+        }
+    }
 }
 
 class Button extends InputDevice {
@@ -50,7 +60,18 @@ class Button extends InputDevice {
         this.size = scale;
     }
 
+    changeBounding(){
+        super.changeBounding();
+        const temp = this.x;
+        this.x=this.y;
+        this.y=temp;
+    }
+
     render(canvasHandler,color = 'default') {
+        if(canvasHandler.wide!=this.wide){
+            this.changeBounding();
+            this.wide=canvasHandler.wide;
+        }
         if (color == 'default') color = (displaySettings.darkMode?'gray':'white');
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
@@ -239,6 +260,10 @@ class Tile extends Button {
 
     //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
+        if(canvasHandler.wide!=this.wide){
+            this.changeBounding();
+            this.wide=canvasHandler.wide;
+        }
         if (this.letter=='') {
             this.#renderEmpty(canvasHandler,currentPlayer,renderMode);
         } else {
