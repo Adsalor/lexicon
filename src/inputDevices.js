@@ -320,8 +320,9 @@ class Tile extends Button {
     //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
         if(canvasHandler.wide!=this.wide){
-            this.changeBounding();
+            //this.changeBounding();
             this.wide=canvasHandler.wide;
+            console.log("bounding changed");
         }
         if (this.letter=='') {
             this.#renderEmpty(canvasHandler,currentPlayer,renderMode);
