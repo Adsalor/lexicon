@@ -68,8 +68,6 @@ class Button extends InputDevice {
             const y1 = yLandscape + scale * Math.sin(angle);
             landscapeBounding.push([x1,y1]);
         }
-        console.log(landscapeBounding);
-        console.log(portraitBounding);
         super(newMode,portraitBounding,landscapeBounding);
         this.xPortrait = xPortrait;
         this.xLandscape = xLandscape;
@@ -127,41 +125,75 @@ class Button extends InputDevice {
 
 class Switch extends InputDevice {
     //for dark/light mode, i.e.
-    leftHex;
-    rightHex;
+    leftHexPortrait;
+    rightHexPortrait;
+    leftHexLandscape;
+    rightHexLandscape;
     toggle;
 
-    constructor(newMode, x, y, scale, color = 'white'){
-        var newBounding = [];
-        var leftHex = [];
-        var rightHex = [];
+    constructor(newMode, xPortrait, yPortrait, scale, color = 'white',xLandscape=xPortrait,yLandscape=yPortrait){
+        var portraitBounding = [];
+        var landscapeBounding = [];
+        var leftHexPortrait = [];
+        var rightHexPortrait = [];
+        var leftHexLandscape = [];
+        var rightHexLandscape = [];
         for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i + (2 * Math.PI / 3);
-            const x1 = x + scale * Math.cos(angle);
-            const y1 = y + scale * Math.sin(angle);
-            leftHex.push([x1,y1]);
+            const x1 = xPortrait + scale * Math.cos(angle);
+            const y1 = yPortrait + scale * Math.sin(angle);
+            leftHexPortrait.push([x1,y1]);
             if(i<3){
-                newBounding.push([x1,y1]);
+                portraitBounding.push([x1,y1]);
             }
         }
         for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i - (Math.PI / 3);
-            const x1 = x + scale * (Math.cos(angle)+1);
-            const y1 = y + scale * Math.sin(angle);
-            rightHex.push([x1,y1]);
+            const x1 = xPortrait + scale * (Math.cos(angle)+1);
+            const y1 = yPortrait + scale * Math.sin(angle);
+            rightHexPortrait.push([x1,y1]);
             if(i<3){
-                newBounding.push([x1,y1]);
+                portraitBounding.push([x1,y1]);
             }
         }
-        super(newMode,newBounding);
-        this.x = x;
-        this.y = y;
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i + (2 * Math.PI / 3);
+            const x1 = xLandscape + scale * Math.cos(angle);
+            const y1 = yLandscape + scale * Math.sin(angle);
+            leftHexLandscape.push([x1,y1]);
+            if(i<3){
+                landscapeBounding.push([x1,y1]);
+            }
+        }
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i - (Math.PI / 3);
+            const x1 = xLandscape + scale * (Math.cos(angle)+1);
+            const y1 = yLandscape + scale * Math.sin(angle);
+            rightHexLandscape.push([x1,y1]);
+            if(i<3){
+                landscapeBounding.push([x1,y1]);
+            }
+        }
+        super(newMode,portraitBounding,landscapeBounding);
+        this.xPortrait = xPortrait;
+        this.yPortrait = yPortrait;
+        this.xLandscape = xLandscape;
+        this.yLandscape = yLandscape;
         this.size = scale;
-        this.leftHex = leftHex;
-        this.rightHex = rightHex;
+        this.leftHexPortrait = leftHexPortrait;
+        this.rightHexPortrait = rightHexPortrait;
+        this.leftHexLandscape = leftHexLandscape;
+        this.rightHexLandscape = rightHexLandscape;
         this.toggle = false;
         this.color = color;
     }
+    get leftHex(){
+        return this.wide ? this.leftHexLandscape : this.leftHexPortrait;
+    }
+    get rightHex(){
+        return this.wide ? this.rightHexLandscape : this.rightHexPortrait;
+    }
+
     render(canvasHandler) {
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the switch container outline
