@@ -101,21 +101,30 @@ class ImageRenderer extends Display {
 class Hex extends Display {
     size;
     color;
-    #vertices;
+    #portraitVertices;
+    #landscapeVertices;
     constructor(x,y,newSize,newColor) {
         super(x,y);
         this.size = newSize;
         this.color = newColor;
-        this.#vertices = [];
+        this.#portraitVertices = [];
+        this.#landscapeVertices = [];
         for (let i = 1; i <= 6; i++) {
             const angle = (Math.PI / 3) * i;
             const x1 = x + this.size * Math.cos(angle);
             const y1 = y + this.size * Math.sin(angle);
-            this.#vertices.push([x1,y1]);
+            this.#portraitVertices.push([x1,y1]);
+        }
+        for (let i = 1; i <= 6; i++) {
+            const angle = (Math.PI / 3) * i + Math.PI/6;
+            const x1 = y + this.size * Math.cos(angle);
+            const y1 = x + this.size * Math.sin(angle);
+            this.#landscapeVertices.push([x1,y1]);
         }
     }
 
     render(canvasHandler) {
+        this.wide = canvasHandler.wide;
         const context = canvasHandler.canvas.get(0).getContext('2d');
         // Draws the hexagon outline
         context.beginPath();
@@ -132,6 +141,10 @@ class Hex extends Display {
         if (this.color == 'default') context.fillStyle = (displaySettings.darkMode?'gray':'white');
         else context.fillStyle = this.color;
         context.fill();
+    }
+
+    get #vertices() {
+        return this.wide?this.#landscapeVertices:this.#portraitVertices;
     }
 }
 
@@ -181,6 +194,7 @@ class TurnIndicator extends Display {
     }
 
     render(canvasHandler) {
+        this.wide = canvasHandler.wide;
         for (const hex of this.#hexes) {
             hex.render(canvasHandler);
         }
@@ -222,6 +236,7 @@ class PopUp extends Display {
     }
 
     render(canvasHandler) {
+        this.wide = canvasHandler.wide;
         let context = canvasHandler.canvas.get(0).getContext('2d');
         context.beginPath();
         context.moveTo(...canvasHandler.convertRelativeToCanvas([this.x - this.size[0]/2,this.y - this.size[1]/2]));

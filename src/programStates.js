@@ -113,7 +113,7 @@ class GameSettingsMenu extends Menu {
         let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,1.0,50);
         
         let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
-        let displays = [new Label("return to menu",0.15,0.2,50),new Label("Player Count",0.3,0.4,70),
+        let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2),new Label("Player Count",0.3,0.4,70),
             new Label("Board Width",0.3,0.7,70),new Label("Board Height",0.3,1.0,70),pCD,bWD,bHD];
         
         super(newLabel,devices,displays);
@@ -163,7 +163,7 @@ class DisplaySettingsMenu extends Menu {
         let menuButton = new Button("settingsMenu",0.1,0.1,0.07);
         let dmSwitch = new Switch(false, 0.7,0.5,0.1);
         let dmLabel = new Label("Dark Mode", 0.3,0.5,50);
-        let menuLabel = new Label("return to menu",0.15,0.2,50);
+        let menuLabel = new Label("return to menu",0.15,0.2,50,0.15,0.2);
         let devices = [menuButton, dmSwitch];
         let displays = [dmLabel, menuLabel];
         super(newLabel, devices, displays);
