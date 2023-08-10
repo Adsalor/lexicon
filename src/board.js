@@ -17,10 +17,6 @@ class BoardLayout {
             }
         }
 
-        console.log(newSize);
-        console.log(newPlayers);
-        console.log(this.tileStates);
-
         //figure out new player placements
         //upper left corner is p1, lower right is p2, lower left is p3, lower right is p4
         //if 5 players, p5 gets center
