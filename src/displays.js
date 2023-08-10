@@ -217,7 +217,7 @@ class TurnIndicator extends Display {
 
     eliminatePlayer(player) {
         let hex = this.#hexes[player + 1];
-        this.#hexes.push(new Hex(hex.x,hex.y,hex.size * 0.8,'gray'));
+        this.#hexes.push(new Hex(hex.xPortrait,hex.yPortrait,hex.size * 0.8,'gray'));
     }
 
     setTurn(newTurn) {
