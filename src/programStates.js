@@ -154,6 +154,34 @@ class GameSettingsMenu extends Menu {
     }
 }
 
+class DisplaySettingsMenu extends Menu {
+    // mimic the game settings
+    darkMode;
+    returnMenu;
+    menuLabel;
+    toggle;
+    constructor(newLabel) {
+        let rtn_btn = new Button("settingsMenu",0.1,0.1,0.07);
+        let togs = new Switch(false, 0.7,0.5,0.1);
+        let dmtog = new Label("Dark Mode", 0.3,0.5,50);
+        let mL = new Label("Return to Menu",0.15,0.2,50);
+        let devices = [rtn_btn, togs];
+        let displays = [dmtog, mL];
+        super(newLabel, devices, displays);
+
+        this.darkMode = dmtog;
+        this.returnMenu = rtn_btn;
+        this.menuLabel = mL;
+        this.toggle = togs;
+    }
+    update(input) {
+        this.toggle = !this.toggle;
+        this.darkMode = this.toggle;
+        console.log("y");
+        return this.updateDarkMode();
+    }
+}
+
 class Game extends ProgramState {
     #board;
     #people; //people is number of actual humans playing, vs players which includes AI plays
