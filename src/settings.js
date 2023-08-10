@@ -118,11 +118,11 @@ class DisplaySettings {
         localStorage.setItem('gameSettingsStored','y');
     }
 
-    updateDarkMode() {
+    updateDarkMode(newDarkMode = this.darkMode) {
+        this.darkMode = newDarkMode;
         $("body, body *").toggleClass('darkMode',this.darkMode);
     }
 }
 
 var gameSettings = new GameSettings();
-
 var displaySettings = new DisplaySettings();

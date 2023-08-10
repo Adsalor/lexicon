@@ -36,21 +36,17 @@ class AI {
     }
     
     pickTile(selectedTiles, board, player) {
-        console.log("searching for next tile with selected tiles",selectedTiles);
 
         //what we already have typed in
         let ranks = this.rankLetters(selectedTiles,board,player);
 
         if (ranks === false) {
-            console.log("dead end hit at",selectedTiles);
             return false;
         }
 
         //pick the best tile with that letter
         for (let i = 0; i < ranks.length; i++) {
-            console.log("attempting to use letter",ranks[i],"with selected tiles",selectedTiles);
             let tiles = board.tilesWithLetter(ranks[i]).filter((tile) => !selectedTiles.includes(tile));
-            console.log("available tiles with ",ranks[i],tiles);
             let bestTile = tiles[0]; //guaranteed to be at least one because if not on board then score = 0
             let bestUtility = this.utilityScore(selectedTiles,board,player,bestTile);
             for (const tile of tiles.slice(1)) {
@@ -60,7 +56,6 @@ class AI {
                     bestUtility = utility;
                 }
             }
-            console.log("selected best utility tile",bestTile);
             selectedTiles.push(bestTile);
             let result = this.pickTile(selectedTiles,board,player);
             if (result === false) {
@@ -77,19 +72,15 @@ class AI {
     }
 
     rankLetters(selectedTiles,board,player) {
-        console.log("ranking letters given selected",selectedTiles);
         //what we already have typed in
         let snippet = this.#word(selectedTiles);
-        console.log("current snippet",snippet);
 
 
         //get the distribution of next letters off of this
         let dictDist = dict.getNextLetterDist(snippet);
-        console.log("current dictionary distribution",dictDist);
 
         //get the board tile distribution
         let boardDist = board.availableLetterDist(player,selectedTiles);
-        console.log("current board availability distribution",boardDist);
 
         let ranks = "abcdefghijklmnopqrstuvwxyz".split("");
         ranks.sort((l,r)=>(dictDist[r]*boardDist[r]-dictDist[l]*boardDist[l]));
@@ -97,10 +88,7 @@ class AI {
         //filter invalid options
         ranks = ranks.filter((char)=>dictDist[char]*boardDist[char] > 0);
 
-        console.log("ranked letters as",ranks.join(""));
-
         if (dictDist[ranks[0]] * boardDist[ranks[0]] == 0) {
-            console.log("best letter",ranks[0],"is invalid!");
             return false;
         }
         return ranks;
@@ -108,7 +96,6 @@ class AI {
 
     pickWord(board,player) {
         //driver for recursive function
-        console.log("beginning search for word to play");
         let chosenTiles = [];
         this.mostRecentWord = this.pickTile(chosenTiles,board,player);
         return this.mostRecentWord;

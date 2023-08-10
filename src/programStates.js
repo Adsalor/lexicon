@@ -146,10 +146,42 @@ class GameSettingsMenu extends Menu {
         }
         return; // if we clicked one of the settings buttons we didn't click exit
     }
+
     render(canvasHandler) {
         this.playerCountDisplay.setText(gameSettings.numPlayers.toString());
         this.boardWidthDisplay.setText(gameSettings.boardSize[0].toString());
         this.boardHeightDisplay.setText(gameSettings.boardSize[1].toString());
+        super.render(canvasHandler);
+    }
+}
+
+class DisplaySettingsMenu extends Menu {
+    // mimic the game settings
+    darkModeSwitch;
+
+    constructor(newLabel) {
+        let menuButton = new Button("settingsMenu",0.1,0.1,0.07);
+        let dmSwitch = new Switch(false, 0.7,0.5,0.1);
+        let dmLabel = new Label("Dark Mode", 0.3,0.5,50);
+        let menuLabel = new Label("return to menu",0.15,0.2,50);
+        let devices = [menuButton, dmSwitch];
+        let displays = [dmLabel, menuLabel];
+        super(newLabel, devices, displays);
+
+        this.darkModeSwitch = dmSwitch;
+        this.darkModeSwitch.toggle = displaySettings.darkMode;
+    }
+
+    update(input) {
+        if (this.darkModeSwitch.overlapping(input)) {
+            this.darkModeSwitch.update(input);
+            displaySettings.updateDarkMode(this.darkModeSwitch.toggle);
+            return;
+        } else return super.update(input);
+    }
+
+    render(canvasHandler) {
+        this.darkModeSwitch.toggle = displaySettings.darkMode;
         super.render(canvasHandler);
     }
 }

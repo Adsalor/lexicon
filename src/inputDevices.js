@@ -201,8 +201,6 @@ class Switch extends InputDevice {
     }
     update(input){
         this.toggle = !this.toggle;
-        displaySettings.darkMode = this.toggle;
-        displaySettings.updateDarkMode();
     }
 }
 
