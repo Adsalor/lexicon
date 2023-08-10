@@ -210,3 +210,30 @@ class TurnIndicator extends Display {
         this.turn = newTurn % (this.#hexes.length - 1);
     }
 }
+
+class PopUp extends Display {
+    label;
+    size;
+
+    constructor(newText, newSize) {
+        super(0.5,8/9);
+        this.label = new Label(newText,this.x,this.y,50);
+        this.size = newSize;
+    }
+
+    render(canvasHandler) {
+        let context = canvasHandler.canvas.get(0).getContext('2d');
+        context.beginPath();
+        context.moveTo(...canvasHandler.convertRelativeToCanvas([this.x - this.size[0]/2,this.y - this.size[1]/2]));
+        context.lineTo(...canvasHandler.convertRelativeToCanvas([this.x + this.size[0]/2,this.y - this.size[1]/2]));
+        context.lineTo(...canvasHandler.convertRelativeToCanvas([this.x + this.size[0]/2,this.y + this.size[1]/2]));
+        context.lineTo(...canvasHandler.convertRelativeToCanvas([this.x - this.size[0]/2,this.y + this.size[1]/2]));
+        context.closePath();
+        context.fillStyle = displaySettings.darkMode?'gray':'white';
+        context.fill();
+        context.fillStyle = displaySettings.darkMode?'white':'black';
+        context.stroke();
+
+        this.label.render(canvasHandler);
+    }
+}
