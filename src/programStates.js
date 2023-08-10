@@ -113,7 +113,7 @@ class GameSettingsMenu extends Menu {
         let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,1.0,50);
         
         let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
-        let displays = [new Label("return to menu",0.15,0.2,50),new Label("Player Count",0.3,0.4,70),
+        let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2),new Label("Player Count",0.3,0.4,70),
             new Label("Board Width",0.3,0.7,70),new Label("Board Height",0.3,1.0,70),pCD,bWD,bHD];
         
         super(newLabel,devices,displays);
@@ -163,7 +163,7 @@ class DisplaySettingsMenu extends Menu {
         let menuButton = new Button("settingsMenu",0.1,0.1,0.07);
         let dmSwitch = new Switch(false, 0.7,0.5,0.1);
         let dmLabel = new Label("Dark Mode", 0.3,0.5,50);
-        let menuLabel = new Label("return to menu",0.15,0.2,50);
+        let menuLabel = new Label("return to menu",0.15,0.2,50,0.15,0.2);
         let devices = [menuButton, dmSwitch];
         let displays = [dmLabel, menuLabel];
         super(newLabel, devices, displays);
@@ -198,6 +198,7 @@ class Game extends ProgramState {
     #currentPlayer;
     #turner;
     #ai;
+    #popup;
     constructor(newLabel,aboveMenu = "mainMenu",singleplayer = false) {
         super(newLabel);
         this.#ai = new AI();
@@ -220,9 +221,18 @@ class Game extends ProgramState {
         this.#currentPlayer = 0;
         this.#selected = [];
         this.#wordDisplay.setText("");
+        this.#popup = [false,null];//what type of popup is active, and pointer to it
     }
 
     update(input) {
+        if (this.#popup[0]) { //if pop-up window active, no input goes to board itself
+            if (this.#popup[0] == 'reset') {
+                this.reload();
+            } else {
+                this.#popup = [false,null];
+            }
+            return;
+        }
         let exiting = this.#exitButton.overlapping(input);
         if (this.#currentPlayer >= this.#people) {
             if (exiting) {
@@ -236,7 +246,7 @@ class Game extends ProgramState {
                     let capitalCaptured = this.#board.playTiles(this.#selected,this.#currentPlayer);
                     this.#advancePlayer(capitalCaptured);
                     if (this.#eliminatedPlayers.length == this.#players - 1) {
-                        //loss screen :(
+                        this.#popup = ['reset',new PopUp("You lost... Click to reset.",[0.6,0.2])];
                     }
                 }
             }
@@ -249,7 +259,10 @@ class Game extends ProgramState {
                 let capitalCaptured = this.#board.playTiles(this.#selected,this.#currentPlayer);
                 this.#advancePlayer(capitalCaptured);
                 if (this.#eliminatedPlayers.length == this.#players - 1) {
-                    //victory screen!
+                    this.#popup = ['reset',new PopUp("Player " + (this.#currentPlayer + 1) + " wins! Click to reset.",[0.7,0.2])];
+                } else if (capitalCaptured) {
+                    //if it's a player's turn and they just captured a capital, popup about it
+                    this.#popup = ['info',new PopUp("Capital captured! Extra turn!",[0.7,0.2])];
                 }
             } else {
                 this.#wordDisplay.setColor('red');
@@ -276,6 +289,9 @@ class Game extends ProgramState {
         this.#submitButton.render(canvas);
         this.#exitButton.render(canvas);
         this.#turner.render(canvas);
+        if (this.#popup[0]) {
+            this.#popup[1].render(canvas);
+        }
     }
 
     #advancePlayer(capitalCaptured) {
@@ -291,8 +307,8 @@ class Game extends ProgramState {
             do {
                 this.#currentPlayer = (this.#currentPlayer + 1) % this.#players;
             } while (this.#eliminatedPlayers.includes(this.#currentPlayer));
-            if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
         }
+        if (this.#currentPlayer >= this.#people) this.#ai.pickWord(this.#board,this.#currentPlayer);
         this.#turner.setTurn(this.#currentPlayer);
     }
 

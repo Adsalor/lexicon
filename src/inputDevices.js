@@ -36,14 +36,6 @@ class InputDevice {
     newState() {
         return this.#newState;
     }
-
-    changeBounding(){  //changes the bounding from portrait to landscape (or vice versa)
-        for (let i = 0; i < this.bounding.length; i++) {
-            const temp = this.bounding[i][0];
-            this.bounding[i][0]=this.bounding[i][1];
-            this.bounding[i][1]=temp;
-        }
-    }
 }
 
 class Button extends InputDevice {
@@ -53,7 +45,7 @@ class Button extends InputDevice {
     yLandscape;
     size;
 
-    constructor(newMode, xPortrait, yPortrait, scale,xLandscape=xPortrait,yLandscape=yPortrait){
+    constructor(newMode, xPortrait, yPortrait, scale,xLandscape=yPortrait,yLandscape=xPortrait){
         var portraitBounding = [];
         for (let i = 1; i <= 6; i++) {
             const angle = (Math.PI / 3) * i;
@@ -63,7 +55,7 @@ class Button extends InputDevice {
         }
         var landscapeBounding = [];
         for (let i = 1; i <= 6; i++) {
-            const angle = (Math.PI / 3) * i;
+            const angle = (Math.PI / 3) * i + Math.PI/6;
             const x1 = xLandscape + scale * Math.cos(angle);
             const y1 = yLandscape + scale * Math.sin(angle);
             landscapeBounding.push([x1,y1]);
@@ -78,20 +70,8 @@ class Button extends InputDevice {
     get x() {
         return this.wide ? this.xLandscape : this.xPortrait;
     }
-    set x(newX){
-        this.xPortrait=newX;
-    }
     get y() {
         return this.wide ? this.yLandscape : this.yPortrait;
-    }
-    set y(newY){
-        this.yPortrait=newY;
-    }
-    changeBounding(){
-        super.changeBounding();
-        const temp = this.x;
-        this.x=this.y;
-        this.y=temp;
     }
 
     render(canvasHandler,color = 'default') {
@@ -131,7 +111,7 @@ class Switch extends InputDevice {
     rightHexLandscape;
     toggle;
 
-    constructor(newMode, xPortrait, yPortrait, scale, color = 'white',xLandscape=xPortrait,yLandscape=yPortrait){
+    constructor(newMode, xPortrait, yPortrait, scale, color = 'white',xLandscape=yPortrait,yLandscape=xPortrait){
         var portraitBounding = [];
         var landscapeBounding = [];
         var leftHexPortrait = [];
@@ -320,9 +300,8 @@ class Tile extends Button {
     //renderMode is 0 if nothing, 1 if selected and expansible, 2 if adjacent to selected, 3 if selected but not expansible
     render (canvasHandler, currentPlayer, renderMode = 0) {
         if(canvasHandler.wide!=this.wide){
-            //this.changeBounding();
+            this.changeBounding();
             this.wide=canvasHandler.wide;
-            console.log("bounding changed");
         }
         if (this.letter=='') {
             this.#renderEmpty(canvasHandler,currentPlayer,renderMode);
