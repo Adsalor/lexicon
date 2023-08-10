@@ -2,11 +2,15 @@ class GameSettings {
     numPlayers;
     boardSize;
     boardLayout;
+    minSizes;
+    maxSize;
 
     constructor() {
         this.numPlayers = 2;
         this.boardSize = [7,7];
         this.boardLayout = new BoardLayout();
+        this.minSizes = [7,8,9,11,13];
+        this.maxSize = [13,13];
     }
 
     loadFromSave() {
@@ -27,6 +31,59 @@ class GameSettings {
     get singleplayerLayout() {
         if (this.numPlayers == 2) return this.boardLayout;
         else return new BoardLayout();
+    }
+
+    get legalActions() {
+        let actions = {};
+        actions['pU'] = (this.numPlayers < 6) && (Math.min(...this.boardSize) >= this.minSizes[this.numPlayers - 1]);
+        actions['pD'] = (this.numPlayers > 2);
+        actions['wU'] = (this.boardSize[0] < 13);
+        actions['wD'] = (this.boardSize[0] > 7) && (this.boardSize[0] > this.minSizes[this.numPlayers - 2]);
+        actions['hU'] = (this.boardSize[1] < 13);
+        actions['hD'] = (this.boardSize[1] > 7) && (this.boardSize[1] > this.minSizes[this.numPlayers - 2]);
+        return actions;
+    }
+
+    increasePlayers() {
+        if (this.legalActions['pU']) {
+            this.numPlayers++;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
+    }
+
+    decreasePlayers() {
+        if (this.legalActions['pD']) {
+            this.numPlayers--;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
+    }
+
+    increaseWidth() {
+        if (this.legalActions['wU']) {
+            this.boardSize[0]++;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
+    }
+
+    decreaseWidth() {
+        if (this.legalActions['wD']) {
+            this.boardSize[0]--;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
+    }
+
+    increaseHeight() {
+        if (this.legalActions['hU']) {
+            this.boardSize[1]++;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
+    }
+
+    decreaseHeight() {
+        if (this.legalActions['hD']) {
+            this.boardSize[1]--;
+            this.boardLayout = new BoardLayout(this.boardSize,this.numPlayers);
+        }
     }
 }
 
@@ -65,3 +122,7 @@ class DisplaySettings {
         $("body, body *").toggleClass('darkMode',this.darkMode);
     }
 }
+
+var gameSettings = new GameSettings();
+
+var displaySettings = new DisplaySettings();

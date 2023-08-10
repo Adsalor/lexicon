@@ -17,9 +17,23 @@ class BoardLayout {
             }
         }
 
+        console.log(newSize);
+        console.log(newPlayers);
+        console.log(this.tileStates);
+
         //figure out new player placements
+        //upper left corner is p1, lower right is p2, lower left is p3, lower right is p4
+        //if 5 players, p5 gets center
+        //if 6 players, p5 and p6 get outer column centers
         this.tileStates[1][1] = 1;
-        this.tileStates[5][5] = 2;
+        this.tileStates[this.tileStates.length - 2][this.tileStates[this.tileStates.length - 2].length - 2] = 2;
+        if (newPlayers > 2) this.tileStates[1][this.tileStates[1].length - 2] = 3;
+        if (newPlayers > 3) this.tileStates[this.tileStates.length - 2][1] = 4;
+        if (newPlayers == 5) this.tileStates[Math.floor((this.tileStates.length - 1) / 2)][Math.floor((this.tileStates[Math.floor((this.tileStates.length - 1) / 2)].length - 1) / 2)] = 5;
+        else if (newPlayers == 6) {
+            this.tileStates[3][Math.floor((this.tileStates[3].length - 1) / 2)] = 5;
+            this.tileStates[this.tileStates.length - 4][Math.floor((this.tileStates[this.tileStates.length - 4].length - 1) / 2)] = 6;
+        }
     }
 }
 

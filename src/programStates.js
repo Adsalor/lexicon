@@ -110,7 +110,7 @@ class GameSettingsMenu extends Menu {
         let bWD = new Label(gameSettings.boardSize[0].toString(),0.75,0.7,50);
         let bHUB = new Button(false,0.9,1.0,0.05);
         let bHDB = new Button(false,0.6,1.0,0.05);
-        let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,0.7,50);
+        let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,1.0,50);
         
         let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
         let displays = [new Label("return to menu",0.15,0.2,50),new Label("Player Count",0.3,0.4,70),
@@ -130,21 +130,27 @@ class GameSettingsMenu extends Menu {
 
     update(input) {
         if (this.playerUpButton.overlapping(input)) {
-            //increase player count
+            gameSettings.increasePlayers();
         } else if (this.playerDownButton.overlapping(input)) {
-            //decrease player count
+            gameSettings.decreasePlayers();
         } else if (this.boardWidthUpButton.overlapping(input)) {
-            //increase board width
+            gameSettings.increaseWidth();
         } else if (this.boardWidthDownButton.overlapping(input)) {
-            //decrease board width
+            gameSettings.decreaseWidth();
         } else if (this.boardHeightUpButton.overlapping(input)) {
-            //increase board height
+            gameSettings.increaseHeight();
         } else if (this.boardHeightDownButton.overlapping(input)) {
-            //decrease board height
+            gameSettings.decreaseHeight();
         } else {
             return super.update(input); //update for new menu state
         }
         return; // if we clicked one of the settings buttons we didn't click exit
+    }
+    render(canvasHandler) {
+        this.playerCountDisplay.setText(gameSettings.numPlayers.toString());
+        this.boardWidthDisplay.setText(gameSettings.boardSize[0].toString());
+        this.boardHeightDisplay.setText(gameSettings.boardSize[1].toString());
+        super.render(canvasHandler);
     }
 }
 
@@ -160,10 +166,10 @@ class Game extends ProgramState {
     #currentPlayer;
     #turner;
     #ai;
-    constructor(newLabel,aboveMenu = "mainMenu",numPeople = gameSettings.numPlayers) {
+    constructor(newLabel,aboveMenu = "mainMenu",singleplayer = false) {
         super(newLabel);
         this.#ai = new AI();
-        this.#people = numPeople;
+        this.#people = (singleplayer?1:gameSettings.numPlayers);
         this.#wordDisplay = new Label("",0.5,0.32,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
         this.#exitButton = new Button(aboveMenu,0.9,0.1,0.07);
@@ -172,7 +178,10 @@ class Game extends ProgramState {
 
     reload() {
         if (this.#people == 1) this.#board = new Board(gameSettings.singleplayerLayout,10/9);
-        else this.#board = new Board(gameSettings.boardLayout,10/9);
+        else {
+            this.#board = new Board(gameSettings.boardLayout,10/9);
+            this.#people = gameSettings.numPlayers;
+        }
         this.#players = gameSettings.numPlayers;
         this.#turner = new TurnIndicator(0.5,0.15,0.05,this.#players);
         this.#eliminatedPlayers = [];
