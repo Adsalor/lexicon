@@ -102,19 +102,19 @@ class GameSettingsMenu extends Menu {
     boardHeightDownButton;
     boardHeightDisplay;
     constructor(newLabel) {
-        let pUB = new Button(false,0.9,0.4,0.05);
-        let pDB = new Button(false,0.6,0.4,0.05);
-        let pCD = new Label(gameSettings.numPlayers.toString(),0.75,0.4,50);
-        let bWUB = new Button(false,0.9,0.7,0.05);
-        let bWDB = new Button(false,0.6,0.7,0.05);
+        let pUB = new Button(false,0.9,0.4,0.05,0.2,0.6);
+        let pDB = new Button(false,0.6,0.4,0.05,0.2,0.9);
+        let pCD = new Label(gameSettings.numPlayers.toString(),0.75,0.4,50,0.2,0.75);
+        let bWUB = new Button(false,0.9,0.7,0.05,0.7,0.6);
+        let bWDB = new Button(false,0.6,0.7,0.05,0.7,0.9);
         let bWD = new Label(gameSettings.boardSize[0].toString(),0.75,0.7,50);
-        let bHUB = new Button(false,0.9,1.0,0.05);
-        let bHDB = new Button(false,0.6,1.0,0.05);
-        let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,1.0,50);
+        let bHUB = new Button(false,0.9,1.0,0.05,1.2,0.6);
+        let bHDB = new Button(false,0.6,1.0,0.05,1.2,0.9);
+        let bHD = new Label(gameSettings.boardSize[1].toString(),0.75,1.0,50,1.2,0.75);
         
         let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
-        let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2),new Label("Player Count",0.3,0.4,70),
-            new Label("Board Width",0.3,0.7,70),new Label("Board Height",0.3,1.0,70),pCD,bWD,bHD];
+        let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2),new Label("Player Count",0.3,0.4,70,0.2,0.4),
+            new Label("Board Width",0.3,0.7,70,0.7,0.4),new Label("Board Height",0.3,1.0,70,1.2,0.4),pCD,bWD,bHD];
         
         super(newLabel,devices,displays);
         this.playerUpButton = pUB;
@@ -162,7 +162,7 @@ class DisplaySettingsMenu extends Menu {
     constructor(newLabel) {
         let menuButton = new Button("settingsMenu",0.1,0.1,0.07);
         let dmSwitch = new Switch(false, 0.7,0.5,0.1);
-        let dmLabel = new Label("Dark Mode", 0.3,0.5,50);
+        let dmLabel = new Label("Dark Mode", 0.3,0.5,50,0.7,0.3);
         let menuLabel = new Label("return to menu",0.15,0.2,50,0.15,0.2);
         let devices = [menuButton, dmSwitch];
         let displays = [dmLabel, menuLabel];
