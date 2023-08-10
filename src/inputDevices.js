@@ -1,11 +1,16 @@
 class InputDevice {
     #newState //whether should update to new program state on interaction, can be false or string representing new state
-    bounding
+    landscapeBounding
+    portraitBounding
     wide
-    constructor(newMode,newBounding) {
+    constructor(newMode,portraitBounding,landscapeBounding=portraitBounding) {
         this.#newState = newMode;
-        this.bounding = newBounding;
+        this.landscapeBounding = landscapeBounding;
+        this.portraitBounding = portraitBounding;
         this.wide=false;
+    }
+    get bounding(){
+        return this.wide ? this.landscapeBounding : this.portraitBounding;
     }
     render(canvas) {
         throw new Error("Render method must be implemented!")
@@ -42,24 +47,48 @@ class InputDevice {
 }
 
 class Button extends InputDevice {
-    x;
-    y;
+    xPortrait;
+    xLandscape;
+    yPortrait;
+    yLandscape;
     size;
 
-    constructor(newMode, x, y, scale){
-        var newBounding = [];
+    constructor(newMode, xPortrait, yPortrait, scale,xLandscape=xPortrait,yLandscape=yPortrait){
+        var portraitBounding = [];
         for (let i = 1; i <= 6; i++) {
             const angle = (Math.PI / 3) * i;
-            const x1 = x + scale * Math.cos(angle);
-            const y1 = y + scale * Math.sin(angle);
-            newBounding.push([x1,y1]);
+            const x1 = xPortrait + scale * Math.cos(angle);
+            const y1 = yPortrait + scale * Math.sin(angle);
+            portraitBounding.push([x1,y1]);
         }
-        super(newMode,newBounding);
-        this.x = x;
-        this.y = y;
+        var landscapeBounding = [];
+        for (let i = 1; i <= 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const x1 = xLandscape + scale * Math.cos(angle);
+            const y1 = yLandscape + scale * Math.sin(angle);
+            landscapeBounding.push([x1,y1]);
+        }
+        console.log(landscapeBounding);
+        console.log(portraitBounding);
+        super(newMode,portraitBounding,landscapeBounding);
+        this.xPortrait = xPortrait;
+        this.xLandscape = xLandscape;
+        this.yPortrait = yPortrait;
+        this.yLandscape = yLandscape;
         this.size = scale;
     }
-
+    get x() {
+        return this.wide ? this.xLandscape : this.xPortrait;
+    }
+    set x(newX){
+        this.xPortrait=newX;
+    }
+    get y() {
+        return this.wide ? this.yLandscape : this.yPortrait;
+    }
+    set y(newY){
+        this.yPortrait=newY;
+    }
     changeBounding(){
         super.changeBounding();
         const temp = this.x;
@@ -69,7 +98,7 @@ class Button extends InputDevice {
 
     render(canvasHandler,color = 'default') {
         if(canvasHandler.wide!=this.wide){
-            this.changeBounding();
+            //this.changeBounding();
             this.wide=canvasHandler.wide;
         }
         if (color == 'default') color = (displaySettings.darkMode?'gray':'white');
