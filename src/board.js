@@ -288,7 +288,7 @@ class Board {
     }
 
     #generateLetter() {
-        return this.#fullyRandomNewLetter();
+        return this.#distrandomNewLetter();
     }
 
     //fully random
@@ -299,7 +299,15 @@ class Board {
 
     //random following the distribution of letter frequencies in game dictionary
     #distrandomNewLetter() {
-
+        let totalLetters = 0;
+        for (const [key, value] of Object.entries(dict.distribution)) {
+            totalLetters += value;
+        }
+        let selection = Math.floor(Math.random() * totalLetters);
+        for (const [key, value] of Object.entries(dict.distribution)) {
+            if (selection < value) return key.toUpperCase();
+            else selection -= value;
+        }
     }
 
     //random following frequency in all english
