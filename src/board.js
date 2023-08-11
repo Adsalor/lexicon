@@ -3,15 +3,24 @@ class BoardLayout {
     tileStates;
     size;
 
-    //default board layout
+    //construct board layout, default args are the 'standard' board configuration
     constructor(newSize = [7,7],newPlayers = 2) {
         this.size = newSize; // number of columns, hexes in large column
         this.tileStates = [];
+
+        //populate each column with 0s, set size to match correct column height (short on leftmost col, then alternating)
+        //rightmost column is always 1 less than the one to its left
         for (let i = 0; i < this.size[0]; i++) {
             this.tileStates[i] = [];
-            var upperLimit = this.size[1];
+
+            //upper limit alternates between max and 1 below max
+            let upperLimit = this.size[1];
             if (i % 2 == 0) upperLimit--;
+
+            //if last column is odd (would be tall) shorten by 2 to make board look nicer
             if (i % 2 == 1 && i == this.size[0] - 1) upperLimit -= 2;
+
+            //populate array up to limit w/ 0s
             for (let j = 0; j < upperLimit; j++) {
                 this.tileStates[i][j] = 0;
             }
@@ -20,13 +29,17 @@ class BoardLayout {
         //figure out new player placements
         //upper left corner is p1, lower right is p2, lower left is p3, lower right is p4
         //if 5 players, p5 gets center
-        //if 6 players, p5 and p6 get outer column centers
+        //if 6 players, p5 and p6 get midway side column centers
         this.tileStates[1][1] = 1;
         this.tileStates[this.tileStates.length - 2][this.tileStates[this.tileStates.length - 2].length - 2] = 2;
         if (newPlayers > 2) this.tileStates[1][this.tileStates[1].length - 2] = 3;
         if (newPlayers > 3) this.tileStates[this.tileStates.length - 2][1] = 4;
+        
+        //middle tile of middle column (spawning here sucks, but idk where else to put them)
+        //at least aggressive play is strong there
         if (newPlayers == 5) this.tileStates[Math.floor((this.tileStates.length - 1) / 2)][Math.floor((this.tileStates[Math.floor((this.tileStates.length - 1) / 2)].length - 1) / 2)] = 5;
         else if (newPlayers == 6) {
+            //middle tile of columns partway through the left and right (4th on left and right) go to players 5 and 6
             this.tileStates[3][Math.floor((this.tileStates[3].length - 1) / 2)] = 5;
             this.tileStates[this.tileStates.length - 4][Math.floor((this.tileStates[this.tileStates.length - 4].length - 1) / 2)] = 6;
         }
@@ -67,6 +80,7 @@ class Board {
                 //even height columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
                 let y = centerY + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddOffset) % 2) * innerRadius;
 
+                //make new tile based on boardlayout slot
                 let newTile;
                 if (layout.tileStates[i][j] > 0) {
                     newTile = new Tile('',x,y,sideLength*0.95,layout.tileStates[i][j]);
@@ -82,23 +96,30 @@ class Board {
             this.tiles[i] = newTileCol;
         }
 
-        
+        //clear border tiles that aren't adjacent to a player's territory
         this.#resetNonAdjacent();
     }
 
+    //render the board on the canvas
     render(canvas,selectedTiles,player) {
+        //get tile information given the selected tiles
         let expansible,adjacent;
         [expansible,adjacent] = this.processTiles(selectedTiles,player);
 
+        //render each tile
         for (let i = 0; i < this.tiles.length; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
                 const tile = this.tiles[i][j];
+                //rendermode is a rendering flag that says what fancy preview the tile should use
+                //see inputDevices::Tile::render for more info
                 const renderMode = ((expansible.includes(tile))?1:(adjacent.includes(tile)?2:(selectedTiles.includes(tile)?3:0)));
                 tile.render(canvas,player,renderMode);
             }
         }
     }
 
+    //returns the adjacent tiles to the tile in that slot
+    //private bc everything else calls this through adjacentTilesToTile
     #adjacentTilesToSlot(col,row) {
         //cheat a little
         const sideLength = this.tiles[0][0].size / 0.95;
@@ -129,6 +150,8 @@ class Board {
         return output;
     }
 
+    //get adjacent tiles to a given tile in the board
+    //TODO: reconstruct indices from tile coordinates and call directly
     adjacentTilesToTile(tile) {
         for (let i = 0; i < this.tiles.length; i++) {
             let j = this.tiles[i].indexOf(tile);
@@ -138,6 +161,7 @@ class Board {
         throw new Error("Invalid tile, not in board!");
     }
 
+    //update the board (return the tile that was clicked on, or false if none was clicked)
     update(input) {
         for (let i = 0; i < this.size[0]; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
@@ -149,21 +173,21 @@ class Board {
         return false;
     }
 
+    //clear border tiles which aren't adjacent to a player's territory
+    //this keeps the letter selection from ballooning and makes the board look nice
     #resetNonAdjacent() {
         //for each non-owned tile, if no adjacent tiles are territory, set their letter to ''
         for (let i = 0; i < this.size[0]; i++) {
             for (let j = 0; j < this.tiles[i].length; j++) {
                 let tile = this.tiles[i][j];
+                
+                //if the tile is a player's territory we don't care about it
                 if (tile.territoryOf) continue;
+                
+                //if some adjacent tile is territory, we don't reset
+                //otherwise clear the letter from it
                 let adjacent = this.#adjacentTilesToSlot(i,j);
-                let territoryAdjacentFlag = false;
-                for (const adjacentTile of adjacent) {
-                    if (adjacentTile.territoryOf) {
-                        territoryAdjacentFlag = true;
-                        break;
-                    }
-                }
-                if (territoryAdjacentFlag) continue;
+                if (adjacent.some((tile)=>tile.territoryOf)) continue;
                 tile.letter = '';
             }
         }
@@ -172,8 +196,8 @@ class Board {
     //returns the set of tiles from selected tiles which will be expanded to
     //and the set of tiles which is adjacent to those tiles
     processTiles(selectedTiles,player) {
-        var expansible = [];
-        var expandAdjacent = [];
+        let expansible = [];
+        let expandAdjacent = [];
 
         //to get expansible tiles, repeatedly iterate the selected list checking for non-expansible tiles
         //adjacent to either player territory or other expansible tiles
@@ -185,6 +209,7 @@ class Board {
                 const currentTile = selectedTiles[i];
                 if (expansible.includes(currentTile)) continue;
                 let adjacencies = this.adjacentTilesToTile(currentTile);
+                //if some adjacent tile is going to be expanded or is territory of the player, this one is too
                 if (adjacencies.some(tile => (expansible.includes(tile) || tile.territoryOf === player + 1))) {
                     expansible.push(currentTile);
                     newTilesFound = true;
@@ -204,10 +229,13 @@ class Board {
         return [expansible,expandAdjacent];
     }
 
+    //actually update the board in response to a play
+    //returns whether a capital tile was captured, for game logic
     playTiles(selectedTiles,player) {
         let expansible,adjacent;
         [expansible,adjacent] = this.processTiles(selectedTiles,player);
 
+        //selected tiles are either going to be territory or get their letter rerolled
         for (let tile of selectedTiles) {
             if (expansible.includes(tile)) {
                 tile.letter = '';
@@ -217,6 +245,7 @@ class Board {
             }
         }
 
+        //make adjacencies into borders, if a capital was adjacent store it
         let capitalCaptured = false;
 
         for (let tile of adjacent) {
@@ -228,6 +257,7 @@ class Board {
             tile.letter = this.#generateLetter();
         }
 
+        //after the board update, reset non-adjacent tiles
         this.#resetNonAdjacent();
 
         return capitalCaptured;
@@ -250,7 +280,7 @@ class Board {
         //set subtract for players who need capitals
         let playersNeedRegen = [...playersInGame].filter((player) => !playersHaveCapital.has(player));
 
-        //give each player a new capital
+        //give each player who needs it a new capital
         for (const player of playersNeedRegen) {
             let territory = [];
 
@@ -262,22 +292,34 @@ class Board {
             }
 
             //the new capital is the tile in the player's territory adjacent to the most other tiles of theirs
+            //this ugly code does that, by reducing the array to the single element with the highest count
             const newCapital = territory.reduce((prev,current) => ((this.adjacentTilesToTile(prev).filter((tile) => (tile.territoryOf == player)).length < this.adjacentTilesToTile(current).filter((tile) => (tile.territoryOf == player)).length)?current:prev))
             newCapital.isCapital = true;
         }
     }
 
+    //check if a player is completely gone from the board
     isEliminated(player) {
         return !this.tiles.some(col => col.some(tile => tile.territoryOf == player + 1));
     }
 
     //AI and letter generation stuff
+
+    //get the weighted distribution of playable letters (letters on tiles)
     availableLetterDist(player,selectedTiles = []) {
+
+        //initialize dict to 0 in each letter of alphabet
         let charMap = {};
         for (const char of "abcdefghijklmnopqrstuvwxyz") charMap[char] = 0;
+
+        //check all tiles
         for (const col of this.tiles) {
             for (const tile of col) {
+                //only count unused tiles with letters that are borders
                 if (!selectedTiles.includes(tile) && !tile.territoryOf && tile.letter) {
+
+                    //normal tiles get weight 1, tiles on the player's border get weight 2
+                    //TODO: experiment with different values
                     let weight = 1;
                     if (this.adjacentTilesToTile(tile).some((adj) => adj.territoryOf == player + 1)) weight += 1;
                     charMap[tile.letter.toLowerCase()] += weight;
@@ -287,6 +329,7 @@ class Board {
         return charMap;
     }
 
+    //get the list of all tiles with a given letter on them
     tilesWithLetter(letter) {
         let result = [];
         for (const col of this.tiles) {
@@ -297,6 +340,7 @@ class Board {
         return result;
     }
 
+    //letter generation
     #generateLetter() {
         return this.#distrandomNewLetter();
     }
@@ -309,10 +353,15 @@ class Board {
 
     //random following the distribution of letter frequencies in game dictionary
     #distrandomNewLetter() {
+
+        //get the count of all letters in the dictionary
+        //dict.distribution is the count of occurrences of each letter
         let totalLetters = 0;
         for (const [key, value] of Object.entries(dict.distribution)) {
             totalLetters += value;
         }
+
+        //random within that range, then check if it's within each slot and if not cut that slot out
         let selection = Math.floor(Math.random() * totalLetters);
         for (const [key, value] of Object.entries(dict.distribution)) {
             if (selection < value) return key.toUpperCase();
@@ -320,7 +369,7 @@ class Board {
         }
     }
 
-    //random following frequency in all english
+    //TODO (or not needed): random following frequency in all english
     #langRandomNewLetter() {
 
     }

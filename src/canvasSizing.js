@@ -9,6 +9,7 @@ class CanvasHandler {
         this.resizeCanvas();
     }
     
+    //runs on window resize event, updates canvas to match new window size
     resizeCanvas() {
         let width, height;
         [width,height] = this.maximumResizeCanvas();
@@ -74,6 +75,7 @@ class CanvasHandler {
         return [width,height];
     }
 
+    //full clear canvas contents
     clear() {
         this.canvas.get(0).getContext('2d').clearRect(0,0,this.canvas.get(0).width,this.canvas.get(0).height);
     }
@@ -140,20 +142,31 @@ class CanvasHandler {
         return [width,height];
     }
 
+    //convert a click event into relative canvas coordinates
     processCoordinates(click) {
         return this.convertOffsetToRelative([click.offsetX,click.offsetY]);
     }
 
+    //relative canvas coordinates are from (0,0) to (1,16/9) or (16/9,1). 
+    //essentially a grid where the shorter canvas side defines the unit length
+    //relative coordinates are used in the game code for convenience, this converts them
+    //to actual canvas coordinates by multiplying by the conversion factor (= size of shorter side)
+    //actual canvas coords are in terms of internal resolution, which is 1920x1080 or flipped
     convertRelativeToCanvas(coordinates) {
         let shortSide = Math.min(this.canvas.get(0).height,this.canvas.get(0).width);
         return [coordinates[0] * shortSide,coordinates[1] * shortSide];
     }
 
+    //convert actual click offset in window pixels to relative coordinates
+    //this is in window pixels so we check the canvas size on window instead of
+    //the internal resolution
+    //then divide by shorter side length to map to internals
     convertOffsetToRelative(coordinates) {
-        let shortSide = Math.min(this.canvas.width(),this.canvas.height());
+        let shortSide = Math.min(this.canvas.height(),this.canvas.width());
         return [coordinates[0] / shortSide, coordinates[1] / shortSide];
     }
 
+    //converts a length (hexagon size length, image width/height, etc) to canvas coords
     convertRelLengthToCanvas(len) {
         return len*Math.min(this.canvas.get(0).height,this.canvas.get(0).width);
     }
