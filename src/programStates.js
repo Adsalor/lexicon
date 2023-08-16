@@ -2,6 +2,14 @@
 //Program and ProgramState form a State design pattern - Program is the context and
 //ProgramStates are the states. Each state must be able to update with user input and render itself
 
+//Best Practice explanation: 
+//This pattern is used to manage the various states of gameplay. We chose to use it because
+//a state pattern lends itself well to menus and game states with multiple potential transitions.
+//For example, without the state pattern, we might have had to use a variable in the program class,
+//store all potential displays in it, and use a switch statement to run in different contexts (menus, gameplay, etc)
+//but with the state pattern, each game state is clearly compartmentalized and code is easier to work with and
+//maintain. We also avoid having a 'god class' that does all the work.
+
 class Program {
     //add your programState instantiations to Program.states
     #currentState;

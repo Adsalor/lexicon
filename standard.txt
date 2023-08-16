@@ -1,0 +1,45 @@
+Coding standards are as follows:
+
+All JS files use PascalCase class names and camelCase function and variable names.
+Bracketing style is K&R, so any brackets appear like:
+
+functionExample() {
+    //content
+}
+
+or like
+
+if (condition) {
+    //thing
+} else if (condition2) {
+    //thing 2
+} else {
+    //thing 3
+}
+
+Function arguments are spaced where practical and non-spaced if it allows them to remain on one line.
+
+functionExample1(arg1, arg2) {
+    //do things
+}
+
+as opposed to
+
+functionExample2(arg1,arg2,arg3,arg4,arg5) {
+    //do more things
+}
+
+The same style is used for function call arguments. 
+
+Indentation is 4-spaced. Code inside brackets is indented another indent from those brackets, i.e.
+
+for (let col of arr) {
+    for (let slot of col) {
+        //do thing
+    }
+}
+
+Documentation is placed above function definition. Comments within a function's code should be placed above
+the line they apply to, or within the line using /**/ if a specific part of it is of interest. An if-else statement
+can have the first line of the else block describe the conditions under which it is reached. Functions do not need to
+be documented if they are simply and descriptively named, but confusing or complex functions should be clearly explained.
