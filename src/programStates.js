@@ -119,6 +119,10 @@ class PreGameMenu extends Menu {
         let button = new Button(false,0.5,1.1,0.1);
         let devices = [new Button("mainMenu",0.1,0.1,0.07), new Button(targetGame.ID(),0.5,0.8,0.1), button];
         let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2), new Label("Play",0.5,0.8,50), new Label("Reset",0.5,1.1,50)];
+        if(targetGame.ID()==="singleplayerGame"){
+            //extra label for singleplayer to tell the player they are playing against a bot
+            displays.push(new Label("Singleplayer:",0.5,0.5,75,0.95,0.2), new Label("Play against a bot",0.5,0.6,50,0.95,0.3));
+        }
         super(newLabel,devices,displays);
         this.resetButton = button;
         this.targetGame = targetGame;
