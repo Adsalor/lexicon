@@ -173,7 +173,15 @@ class GameSettingsMenu extends Menu {
         
         let devices = [new Button("settingsMenu",0.1,0.1,0.07),pUB,pDB,bWUB,bWDB,bHUB,bHDB];
         let displays = [new Label("return to menu",0.15,0.2,50,0.15,0.2),new Label("Player Count",0.3,0.4,70,0.2,0.4),
-            new Label("Board Width",0.3,0.7,70,0.7,0.4),new Label("Board Height",0.3,1.0,70,1.2,0.4),pCD,bWD,bHD];
+            new Label("Board Width",0.3,0.7,70,0.7,0.4),new Label("Board Height",0.3,1.0,70,1.2,0.4),
+
+            //+ and - labels on the increase/decrease buttons
+            new Label("+",0.9,0.4,70,0.2,0.6),new Label("-",0.6,0.4,70,0.2,0.9),
+            new Label("+",0.9,0.7,70,0.7,0.6),new Label("-",0.6,0.7,70,0.7,0.9),
+            new Label("+",0.9,1.0,70,1.2,0.6),new Label("-",0.6,1.0,70,1.2,0.9),
+
+            //actual status displays
+            pCD,bWD,bHD];
         
         super(newLabel,devices,displays);
 
@@ -265,7 +273,9 @@ class Game extends ProgramState {
     #selected; //set of selected tiles
     #wordDisplay; //Label that displays selected word
     #submitButton; //button players use to submit word
+    #submitLabel; //text to describe button
     #exitButton; //button to exit game and return to menu
+    #exitLabel; //text to describe exit button
     #currentPlayer; //the player currently playing the game
     #turner; //the turn indicator display
     #ai; //game AI
@@ -278,7 +288,9 @@ class Game extends ProgramState {
         this.#people = (singleplayer?1:gameSettings.numPlayers);
         this.#wordDisplay = new Label("",0.5,0.32,90);
         this.#submitButton = new Button(false,0.1,0.1,0.07);
+        this.#submitLabel = new Label("Submit",0.1,0.2,50,0.25,0.1);
         this.#exitButton = new Button(aboveMenu,0.9,0.1,0.07);
+        this.#exitLabel = new Label("Exit",0.9,0.2,50,0.22,0.9);
         //stuff that changes every reload
         this.reload();
     } 
@@ -390,7 +402,9 @@ class Game extends ProgramState {
         this.#wordDisplay.setText(this.#word());
         this.#wordDisplay.render(canvas);
         this.#submitButton.render(canvas);
+        this.#submitLabel.render(canvas);
         this.#exitButton.render(canvas);
+        this.#exitLabel.render(canvas);
         this.#turner.render(canvas);
 
         //if there's a popup, render it too

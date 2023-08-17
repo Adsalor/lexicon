@@ -51,7 +51,7 @@ class Board {
     size;
 
     //construction of a new board uses the selected board layout
-    constructor(layout,centerY = 8/9) {
+    constructor(layout,centerY = 10/9) {
         this.size = layout.size;
         //the hexagon flat side will be directed along the shorter side
         //we want the hexagons to use the full width of the shorter side
@@ -64,21 +64,42 @@ class Board {
         const lengthsToFill = 0.5 + this.size[0]*1.5;
 
         //and since side length * number of lengths to fill board = shorter side = 1:
-        const sideLength = 1 / lengthsToFill;
-        const innerRadius = (Math.sqrt(3) / 2) * sideLength;
+        let sideLength = 1 / lengthsToFill;
+        let innerRadius = (Math.sqrt(3) / 2) * sideLength;
+
+        //patch for 7x13 or similar very tall boards
+        //if the given height would expand below the bottom of the canvas or above the UI cutoff,
+        //shrink the tile size and inner radius to make them fit
+        if (innerRadius * this.size[1] + centerY > 16/9 || centerY - innerRadius * this.size[1] < 4/9) {
+            //to fit perfectly, the board needs to be both below the UI cutoff and above the canvas bottom
+            const UIInnerRadius = (centerY - 4/9) / this.size[1];
+            const canvasBottomInnerRadius = (16/9 - centerY) / this.size[1];
+
+            innerRadius = Math.min(UIInnerRadius,canvasBottomInnerRadius);
+            sideLength = 2 / Math.sqrt(3) * innerRadius;
+        }
 
         this.tiles = [];
-        const evenOddOffset = this.size[1] % 2;
+        const evenOddTileOffset = this.size[1] % 2;
         //now, start constructing tiles in board according to board layout
         for (let i = 0; i < layout.tileStates.length; i++) {
+            
+            //x should be centered on 0.5 of the shorter side = 0.5
+            //off from center by amount off from center column * 1.5
+            //col 0 should be off from center of 7 col board by 4.5*side lengths
+            //col 6 should be off by same amount in the other direction
+            //(0 - 3) or (6 - 3) * 1.5
+            //index offset from index of center column, * 1.5 side lengths
+            let x = 0.5 + ((i - this.size[0]/2 + 0.5) * 1.5) * sideLength;
+
             let newTileCol = [];
             for (let j = 0; j < layout.tileStates[i].length; j++) {
-                let x = (1.5*i + 1) * sideLength;
-                //y should be centered on 0.5 of the longer side = 8/9
+                
+                //y should be centered on centerY
                 //2*(hexes in large column) - 1 possible slots
-                //middle slot = 8/9, rest are off by innerRadius
-                //even height columns have offset from 8/9 by innerRadius, increment by 2*innerRadius
-                let y = centerY + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddOffset) % 2) * innerRadius;
+                //middle slot = centerY, rest are off by innerRadius
+                //even height columns have offset from centerY by innerRadius, increment by 2*innerRadius
+                let y = centerY + ((j - (Math.floor(layout.tileStates[i].length / 2) )) * 2 * innerRadius) + ((i + evenOddTileOffset) % 2) * innerRadius;
 
                 //make new tile based on boardlayout slot
                 let newTile;
